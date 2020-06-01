@@ -8,9 +8,9 @@ void runValidationPlots()
   // Load the macro
   gROOT->ProcessLine(".L ../baseCodeForPlots/comparisonPlots.C");
  
-  TString treePath = "l1NtupleProducer/Stage2/efficiencyTree";
-  TString inputDirectory  = "/scratch/skkwan/Run2Ntuplizer/2020-Apr-27_Run2_ggHtautau.root";
-  TString outputDirectory = "test_";
+  TString treePath = "mutau_slimmed";
+  TString inputDirectory  = "/afs/hep.wisc.edu/user/skkwan/public/exoticHiggs/May2020/CMSSW_9_4_0/src/AABBTT/out.root";
+  TString outputDirectory = "plots/";
 
   TString sigCut = "recoTauPt>10 && genTauPt>10 && genTauDM>9 && l1TauPt>0";
   TString bkgCut = "genTauPt<5";
