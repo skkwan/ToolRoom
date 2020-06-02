@@ -44,18 +44,34 @@ void applyLegStyle(TLegend *leg){
   leg->SetHeader("");
   leg->SetShadowColor(0);
 }
+
  
-/* Generate a plot of a single variable, with an optional cut. 
-   The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename "name". The histogram has (bins) number of bins and ranges from integers low to high. */
-int singleVariablePlots(TString variable, TString cut, TString treePath, 
-			TString inputDirectory, TString outputDirectory, TString name,
-			int bins, float low, float high){ 
+/* Read in and plot an EXISTING TH1F:
+    th1fName :  the name of the TH1F inside the file (usually the name of the variable).
+    xLabel   :  the x-axis label on the plot.
+    paveText :  text to go in a TPave box. 
+    isAU     : if True, normalize the plot so the area under the curve is 1, and set y-axis title to "A.U.".
+               if False, do not normalize and set y-axis title to "Counts".
+    histPath :  the path to the TH1F inside the file (usually the name of the folder in the ROOT file).
+    inputDirectory : the path to the ROOT file (~/myRepo/input.root).
+    outputDirectory: the directory where the output plots will be saved.
+*/
+
+int plotTH1F(TString th1fName, 
+             TString xLabel, TString paveText,
+             bool isAU,
+             TString histPath, 
+			       TString inputDirectory,
+             TString outputDirectory){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
+//  gROOT->ProcessLine(".L ../baseCodeForPlots/singleVariablePlots.C");
   setTDRStyle();
 
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
+
+
   Tcan->cd();     /* Set current canvas */
   Tcan->SetFillColor(0);
   //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
@@ -76,16 +92,9 @@ int singleVariablePlots(TString variable, TString cut, TString treePath,
   //gStyle->SetEndErrorSize(0);
   //gStyle->SetErrorX(0.5);
  
-  TTree* tree = (TTree*)file->Get(treePath);
-  if(tree == 0){
-    std::cout<<"ERROR: Tree "<< treePath<<" NOT FOUND; EXITING"<<std::endl;
-    return 0;
-  }
  
-  TH1F *hist = new TH1F("hist","hist", bins, low, high);
-
-
-  tree->Draw(variable+">>+hist", cut);
+  TH1F* hist = 0;
+  file->GetObject(histPath+th1fName, hist);
 
   hist->SetMarkerColor(0);
   hist->SetFillStyle(1001);
@@ -93,20 +102,46 @@ int singleVariablePlots(TString variable, TString cut, TString treePath,
   hist->SetLineWidth(1);
   hist->SetLineColor(kBlue+2);
 
-  hist->Scale(1/hist->Integral());
+  ///// DRAWING
 
-  hist->Draw("HIST"); 
+  // If normalizing the histogram, y-axis should be A.U.
+  if (isAU) {
+    hist->Scale(1/hist->Integral());
+    hist->GetYaxis()->SetTitle("A.U.");
+  }
+  else {
+    hist->GetYaxis()->SetTitle("Counts");
+  }
+  hist->GetYaxis()->SetTitleSize(0.05);
   
-  hist->GetXaxis()->SetTitle(variable);
-  hist->GetYaxis()->SetTitle("A.U.");
+  
+  // X-axis label
+  hist->GetXaxis()->SetTitle(xLabel);
+  hist->GetXaxis()->SetTitleSize(0.05);
 
-  //  leg->AddEntry(hist, "L1 #tau_{h}, L1 p_{T}>0 GeV","l");
-  //  leg->Draw();
- 
+
+  
+  hist->Draw("HIST"); 
+
+  // Legend
+  // leg->AddEntry(hist, legLabel, "l");
+  // leg->Draw();
+
+  // Draw the TPaveText
   Tcan->cd();
-  Tcan->SaveAs(outputDirectory+name+".png");
+  TPaveText *pt = new TPaveText(0.6, 0.85, 0.96, 0.90, "NDCNB"); 
+  pt->SetFillColor(kWhite);
+  pt->AddText(paveText);
+  pt->SetTextColor(kBlack);
+  pt->Draw();
+ 
+  //  Save the plot
+  Tcan->cd();
+  Tcan->SaveAs(outputDirectory+th1fName+".png");
+  Tcan->SaveAs(outputDirectory+th1fName+".pdf");
  
   delete Tcan;
+
 
   return 1;
 
