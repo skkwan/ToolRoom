@@ -38,3 +38,14 @@ In `efficiencyPlots/`, edit `makeEfficienciesPlot.cpp`, and run it as a ROOT mac
 ## Make rates plots
 
    To be added.
+
+## MC Sample generation
+   Augments the GenProductions GitHub.
+   ### Datacard creation
+   See my GenProductions Github.
+
+   ### Gridpack generation and validation 
+   Currently I run them from the directory `genproductions/bin/MadGraph5_aMCatNLO`. Scripts for looping over mass points to generate and validate gridpacks are in `monteCarloSamples` (they won't run out of the box, but I'm saving them for reference.)
+
+## Synchronization: compare two n-tuples
+   Code is copied from [2015 Higgs to Tau Tau GitHub](https://github.com/CMS-HTT/2015-sync/blob/master/compare.py). See documentation inside `compare.py` for how to call it (CMSSW release not necessary).
