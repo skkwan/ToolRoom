@@ -101,14 +101,15 @@ void plotTGraphAsymmErrors(std::vector<TGraphAsymmErrors*> graphs,
 
 void makeTGraphAsymmErrorsPlot(void)
 {
-  gROOT->ProcessLine(".L calculateEfficiency.cpp");
+  //  gROOT->ProcessLine(".L calculateEfficiency.cpp");
 
   /* Load the TTree. */
   //TString treePath = "l1NtupleProducer/Stage2/efficiencyTree";
   TString treePath = "";
-  //  TString rootFileDirectory = "../test/analyzer.root";
+  // TString rootFileDirectory = "FitHistograms_tauFR_2018.root";
   TString rootFileDirectory = "/eos/user/s/skkwan/hToAA/tauFRfromCecile/FitHistograms_tauFR_2018.root";
   TString outputDirectory = "/eos/user/s/skkwan/hToAA/tauFRfromCecile/plots/";
+  //TString outputDirectory = "plots/";
 
   TFile f(rootFileDirectory);
 
@@ -127,25 +128,33 @@ void makeTGraphAsymmErrorsPlot(void)
   TGraphAsymmErrors* dm0_loose = (TGraphAsymmErrors*)temp->Clone(0);
   vGraphs.push_back(dm0_loose);
   vLabels.push_back("Loose/VVVLoose");
-  vColors.push_back(kAzure+1);
+  // vColors.push_back(kAzure+1);
+  // vColors.push_back(kCyan-6);
+  vColors.push_back(kRed-3);
 
   f.GetObject("hpt_dm0_deepmedium_hpt_dm0_deepveryveryveryloose", temp);
   TGraphAsymmErrors* dm0_medium = (TGraphAsymmErrors*)temp->Clone(0);
   vGraphs.push_back(dm0_medium);
   vLabels.push_back("Medium/VVVLoose");
-  vColors.push_back(kPink+6);
+  //  vColors.push_back(kPink+6);
+  //  vColors.push_back(kPink+6);
+  vColors.push_back(kBlue-3);
   
   f.GetObject("hpt_dm0_deeptight_hpt_dm0_deepveryveryveryloose", temp);
   TGraphAsymmErrors* dm0_tight = (TGraphAsymmErrors*)temp->Clone(0);
   vGraphs.push_back(dm0_tight);
   vLabels.push_back("Tight/VVVLoose");
-  vColors.push_back(kViolet-5);
+  //  vColors.push_back(kViolet-5);
+  //  vColors.push_back(kOrange+7);
+  vColors.push_back(kGreen-3);
 
   f.GetObject("hpt_dm0_deepverytight_hpt_dm0_deepveryveryveryloose", temp);
   TGraphAsymmErrors* dm0_vtight = (TGraphAsymmErrors*)temp->Clone(0);
   vGraphs.push_back(dm0_vtight);
   vLabels.push_back("VTight/VVVLoose");
-  vColors.push_back(kBlue-3);
+  //vColors.push_back(kBlue-3);
+  // vColors.push_back(kCyan+2);
+  vColors.push_back(kBlack);
 
   plotTGraphAsymmErrors(vGraphs, vLabels, vColors,
   			"Reco #tau_{H} p_{T} [GeV]",
