@@ -8,15 +8,20 @@ void runValidationPlots()
   // Load the macro
   gROOT->ProcessLine(".L ../baseCodeForPlots/comparisonPlots.C");
  
-  TString treePath = "mutau_slimmed";
-  TString inputDirectory  = "/afs/hep.wisc.edu/user/skkwan/public/exoticHiggs/May2020/CMSSW_9_4_0/src/AABBTT/out.root";
+  TString treePath = "mutau_tree";
+  TString inputDirectory  = "/eos/user/s/skkwan/hToAA/genSkims/Nov-03-2020-20h40m/SUSYVBFToHToAA_AToBB_AToTauTau_M-40GenSkim.root";
   TString outputDirectory = "plots/";
 
-  TString sigCut = "recoTauPt>10 && genTauPt>10 && genTauDM>9 && l1TauPt>0";
-  TString bkgCut = "genTauPt<5";
+  TString sigCut = "";
+  TString bkgCut = "";
 
-  comparisonPlots("l1TauPt", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "l1TauPt", 60, 0, 120);
-  comparisonPlots("l1TauEta", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "l1TauEta", 60, -3, 3);
-  comparisonPlots("l1TauPhi", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "l1TauPhi", 60, -4, 4);
+  comparisonPlots("pt_1", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "pt_1", 60, 0, 120);
+  comparisonPlots("eta_1", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "eta_1", 60, -3, 3);
+  comparisonPlots("phi_1", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "phi_1", 60, -4, 4);
 
+  comparisonPlots("pt_2", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "pt_2", 60, 0, 120);
+  comparisonPlots("eta_2", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "eta_2", 60, -3, 3);
+  comparisonPlots("phi_2", sigCut, bkgCut, treePath, inputDirectory, outputDirectory, "phi_2", 60, -4, 4);
+
+  
 }

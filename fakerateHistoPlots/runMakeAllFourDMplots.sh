@@ -3,6 +3,16 @@
 # Start with DM 0 
 root -l -b -q makeTGraphAsymmErrorsPlot.cpp
 
+# Do DM 1
+FILE="makeTGraphAsymmErrorsPlot_DM1.cpp"
+cp makeTGraphAsymmErrorsPlot.cpp ${FILE}
+grep -rl 'DM0' ${FILE} | xargs sed -i 's/DM0/DM1/g'
+grep -rl 'dm0' ${FILE} | xargs sed -i 's/dm0/dm1/g'
+grep -rl 'ErrorsPlot(' ${FILE} | xargs sed -i 's/ErrorsPlot(/ErrorsPlot_DM1(/g'
+
+root -l -b -q ${FILE}
+rm ${FILE}
+
 # Do DM 10
 FILE="makeTGraphAsymmErrorsPlot_DM10.cpp"
 cp makeTGraphAsymmErrorsPlot.cpp ${FILE}
