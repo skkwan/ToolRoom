@@ -51,8 +51,10 @@ void makeEfficienciesPlot(void)
   // Send the vectors to a plotting function
   plotNEfficiencies(vGraphs, vLabels, vColors,
 		    "Jet reco p_{T} [GeV]",
-		    "ggHtautau",                                                                
-		    "eff_jet_recoPt",        
+		    //		    "L1 jet |#eta| < 2.5, no gen cuts",
+		    //		    "eff_jet_recoPt_No_GenCuts_In_Numerator",        
+		    "L1 jet |#eta| < 2.5",
+		    "eff_jet_recoPt",
 		    outputDirectory);    
   
   // Don't forget to clear the vectors if adding another set of graphs

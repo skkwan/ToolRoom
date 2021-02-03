@@ -46,8 +46,10 @@ void plotNEfficiencies(std::vector<TGraphAsymmErrors*> graphs,
   assert((graphs.size() == labels.size()) && (graphs.size() == colors.size()));
 
   setTDRStyle();
+  
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 1000, 800);
-  TLegend* leg = new TLegend(0.60,0.75,0.95,0.95);
+  TLegend* leg = new TLegend(0.60,0.70,0.95,0.95);  // top right
+  // TLegend* leg = new TLegend(0.60, 0.15, 0.95, 0.40); // bottom right
   Tcan->SetGrid();
 
   Tcan->cd();     /* Set current canvas */
@@ -99,8 +101,8 @@ void plotNEfficiencies(std::vector<TGraphAsymmErrors*> graphs,
     {
       leg->AddEntry(*itGraph, (TString) *itLabel,  "P");
     }
-
-  gStyle->SetLegendFont(25);
+  leg->SetHeader(legendName, "C"); // option C centers the header
+  leg->SetTextSize(0.035);
   leg->Draw();
 
   Tcan->cd();

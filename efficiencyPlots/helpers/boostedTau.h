@@ -17,12 +17,17 @@ int passNumCompiledCut(int genId, int genMother,
 		       int i) {
   
   return ((genId == 25 || genMother == 25) && genDR < 0.4) &&
-    abs(l1Eta) < 2.5 && 
+    abs(l1Eta) < 2.5 &&
     (recoPt >= 200) &&
-    (regionEta[i] == "010" || regionPhi[i] == "010" || 
+    (regionEta[i] == "010" || regionPhi[i] == "010" ||
      regionEta[i] == "110" || regionEta[i] == "011" ||
      regionPhi[i] == "110" || regionPhi[i] == "011");
-
+  
+  // TEMP: test if gen cuts are the reason why eff's don't peak at 100%
+  /* return abs(l1Eta) < 2.5 && (recoPt >= 200) && */
+  /*   (regionEta[i] == "010" || regionPhi[i] == "010" || */
+  /*    regionEta[i] == "110" || regionEta[i] == "011" || */
+  /*    regionPhi[i] == "110" || regionPhi[i] == "011"); */
   
 }
 
