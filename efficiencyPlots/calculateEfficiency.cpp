@@ -1,7 +1,6 @@
 /*******************************************************************/
 /* calculateEfficiency.cpp                                         */
 /* Helper function                                                 */
-/* Based on comparisonplots.C by Isobel Ojalvo                     */
 /* Author: Stephanie Kwan                                          */
 /*******************************************************************/
 
@@ -34,11 +33,10 @@
 #include <TMath.h>
 #include <vector>
 
-/* TMVA */
-#include "TMVA/Tools.h"
-#include "TMVA/Reader.h"
-#include "TMVA/MethodCuts.h"
-
+#include "ROOT/RDataFrame.hxx"
+#include "ROOT/RVec.hxx"
+#include "helpers/boostedTau.h"
+#include "helpers/RDataFrameFunctions.h"
 
 #ifndef CALCULATE_EFFICIENCY_CPP_INCL
 #define CALCULATE_EFFICIENCY_CPP_INCL
@@ -53,20 +51,27 @@ void setMaxErrorTo1(TGraphAsymmErrors *graph);
 
 /* Calculates and returns the efficiency and statistical uncertainty
    for variable, using the n-tuple specified by rootFileDirectory
-   and treePath, and applying the L1 cuts l1Cut and reco-level cut
-   recoCut. Returns a TGraphAsymmErrors with x-axis range [low, high]).
+   and treePath.
+
+   ** n.b.: The exact cut applied depends on the helper file included above! 
+      The helper file must contain a function GetNumDenom which Defines 
+      passNumCut and passDenomCut ** 
+      An optional argument numExtraCut can be passed, which is helpful when
+      the efficiency plot has multiple curves where we tweak something in the
+      numerator.
+   
+   Returns a TGraphAsymmErrors with x-axis range [low, high]).
    If variableBin = true, uses the bins specified in the function.
 */
    
 TGraphAsymmErrors* calculateEfficiency(TString variable,
 				       TString treePath, TString rootFileDirectory,
-				       TString l1Cut,
-				       TString recoCut,
 				       double low,
 				       double high,
-				       bool variableBin = false)
+				       bool variableBin = false,
+				       std::string numExtraCut = "")
 {
-  /* Load file */
+  // Check if file/tree exists (also loads it, but later we use RDataFrame)
   TFile *file = new TFile(rootFileDirectory);
   if (!file->IsOpen() || file==0 )
     {
@@ -81,46 +86,61 @@ TGraphAsymmErrors* calculateEfficiency(TString variable,
       return NULL;
     }
 
+  // Load file into RDataFrame
+  ROOT::RDataFrame dfBase((std::string) treePath, (std::string) rootFileDirectory);
 
-  /* Numerator and denominator histograms. */
-  TH1F* Num;
-  TH1F* Denom;
-  int bins = 15;
+  
+  auto df = GetNumDenom(dfBase);
+
+  auto dfNum   = df.Filter("passNumCompiledCut > 0", "Pass numerator cut (compiled component ONLY)");
+  auto dfDenom = df.Filter("passDenomCut > 0", "Pass denominator cut");
+
+  // If there was an extra num cut, add an extra filter and update dfNumFinal
+  auto dfNumFinal = applyExtraCut(dfNum, numExtraCut, "Pass extra numerator cut " + numExtraCut);
+  
+  // Print cutflow reports
+  auto reportNum = dfNumFinal.Report();
+  auto reportDenom = dfDenom.Report();
+  reportNum->Print();
+  reportDenom->Print();
+  
+  // Initialize histograms and bins
+  ROOT::RDF::RResultPtr<TH1D> denom, num;
+  int bins = 10;
   // Float_t xbins[10] = {0, 5, 10, 20, 25, 30, 50, 70, 100, 200};
   Float_t xbins[11] = {20, 25, 30, 35, 40, 45, 50, 60, 70, 90, 110};
   int nVarBins = (int) sizeof(xbins)/sizeof(xbins[0]) - 1;
+  std::string var = (std::string) variable;
 
+  // Fill the histograms
   if(variableBin)
     {
-      Denom = new TH1F("Denom", "Denom", nVarBins, xbins);
-      Num = new TH1F("Num", "Num", nVarBins, xbins);
+      num   = dfNumFinal.Histo1D({"num", "num", nVarBins, xbins}, var);
+      denom = dfDenom.Histo1D({"denom", "denom", nVarBins, xbins}, var);
     }
   else
     {
-      Denom = new TH1F("Denom", "Denom", bins, low, high);
-      Num = new TH1F("Num", "Num", bins, low, high);
+      num   = dfNumFinal.Histo1D({"num", "num", bins, low, high}, var);
+      denom = dfDenom.Histo1D({"denom", "denom", bins, low, high}, var);
     }
-  Denom->Sumw2();
-  Num->Sumw2();
+  
+  num->Sumw2();
+  denom->Sumw2();
 
-  /* Fill the histograms. */
-  tree->Draw(variable+">>+Denom", recoCut);
-  tree->Draw(variable+">>+Num", l1Cut);
+  num.GetPtr()->Divide(denom.GetPtr());
 
-  /*
+  // Check:
+  printf("Printing first ten bin contents (before restricting max/min to 1.0 and 0.0)\n");
   for (int i = 0; i < 10; i++)
     {
-      printf("Num bin %d content is %f, with error %f\n", i,
-	     Num->GetBinContent(i),
-             Num->GetBinError(i));
+      printf("num bin %d content is %f, with error %f\n", i,
+	     num->GetBinContent(i),
+             num->GetBinError(i));
 
     }
-  */
 
-  Num->Divide(Denom);
-
-  TGraphAsymmErrors* effAsym = new TGraphAsymmErrors(Num);
-
+  // Efficiencies cannot be less than 0 or greater than 1
+  TGraphAsymmErrors* effAsym = new TGraphAsymmErrors(num.GetPtr());
   setMaxErrorTo1(effAsym);
 
   return effAsym;

@@ -35,7 +35,7 @@
 /*******************************************************************/
 
 void plotNEfficiencies(std::vector<TGraphAsymmErrors*> graphs, 
-		       std::vector<TString> labels,
+		       std::vector<std::string> labels,
 		       std::vector<int> colors,
 		       TString xAxisLabel,
 		       TString legendName,
@@ -47,16 +47,15 @@ void plotNEfficiencies(std::vector<TGraphAsymmErrors*> graphs,
 
   setTDRStyle();
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 1000, 800);
-  TLegend* leg = new TLegend(0.60,0.75,0.85,0.9);
+  TLegend* leg = new TLegend(0.60,0.75,0.95,0.95);
   Tcan->SetGrid();
 
   Tcan->cd();     /* Set current canvas */
   Tcan->SetFillColor(0);
-  leg = new TLegend(0.55, 0.2, 0.90, 0.5);
   applyLegStyle(leg);
 
   std::vector<TGraphAsymmErrors*>::iterator itGraph;
-  std::vector<TString>::iterator itLabel;
+  std::vector<std::string>::iterator itLabel;
   std::vector<int>::iterator itColor;
   
   TGraphAsymmErrors* histDummy;
@@ -98,14 +97,17 @@ void plotNEfficiencies(std::vector<TGraphAsymmErrors*> graphs,
        itGraph != graphs.end();
        itGraph++, itLabel++)
     {
-      leg->AddEntry(*itGraph, *itLabel,  "P");
+      leg->AddEntry(*itGraph, (TString) *itLabel,  "P");
     }
 
   gStyle->SetLegendFont(25);
   leg->Draw();
 
   Tcan->cd();
-  Tcan->SaveAs(outputDir+outputName);
+  std::cout << "Saving to " << outputDir+outputName << ".pdf and .png..." << std::endl;
+
+  Tcan->SaveAs(outputDir+outputName+".pdf");
+  Tcan->SaveAs(outputDir+outputName+".png");
 }
 		       
 
@@ -268,7 +270,8 @@ void plotFiveHists(
   leg->Draw();
 
   Tcan->cd();
-  Tcan->SaveAs(outputDir+outputName);
+  Tcan->SaveAs(outputDir+outputName+".png");
+  Tcan->SaveAs(outputDir+outputName+".pdf");
 
 }
 
