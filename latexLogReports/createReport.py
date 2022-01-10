@@ -11,7 +11,10 @@ parser.add_argument("--build",
                     help="Build the resulting .tex",
                     dest='execute', action = 'store_true')
 parser.add_argument("--rootdir",
-                    help="Path to the log files", required=True)
+                    help="Path to the postprocess log files (typically in intermediateTuples)", required=True)
+parser.add_argument("--plotdir",
+                    help="Path to the plot log files (typically in stackPlots)", required=False, 
+                    default="")
 parser.set_defaults(execute=True)
 
 args = parser.parse_args()
@@ -34,14 +37,36 @@ def escape_latex(value):
         '~', '\\textasciitilde ').replace(
         '^', '\\textasciicircum ') 
 
-def main():
+def getFileContent(f):
+    '''
+    Helper function to return the contents of file f as a string, with LaTeX 
+    special characters escaped.
+    '''
+    with open(f) as myfile:
+        content = myfile.readlines() 
+        content = '\n'.join(content)      # collapse the list back into one string             
+        content = escape_latex(content)
+    return content
 
+def main():
+    '''
+    Compile postprocess.cxx log files (all files titled logRun_*) in a directory
+    and write them to a LaTeX file. Also make note of datasets that do not say 'SUCCESS' in the logRun.
+
+    Builds the LaTeX file and writes the PDF to the intermediateTuples/ directory with the logRun_*.
+
+    If the yields directory is specified, also write yields to an output LaTeX file, builds it, aand
+    writes the PDF to the stackPlots/ directory.
+    '''
     descriptor=os.path.basename(args.rootdir)
     sectionsWithSummaries = ''
+    postprocessSummaries = ''
     samplesThatDidNotFinish = ''
     samplesWithWarnings = ''
 
-    # Loop through log files in the directory
+    #########################################################    
+    # Loop through log files in the postprocess.cxx directory
+    #########################################################    
     for subdir, dirs, files in os.walk(args.rootdir):
         for f in files:
             
@@ -65,19 +90,48 @@ def main():
                     header = '\section{%s}' % escape_latex(sample)
                     # print(header)
                     
-                    
                     sectionsWithSummaries += header + '\n'
                     if 'SUCCESS' not in skimCutFlow:
                         sectionsWithSummaries += '[ERROR:] Run did not finish!'
                         samplesThatDidNotFinish += escape_latex(sample) + ', '
-                    if 'WARNING' in skimCutFlow:
+                    elif ('WARNING' in skimCutFlow) or ('ERROR' in skimCutFlow):
                         samplesWithWarnings     += escape_latex(sample) + ', '
-                    sectionsWithSummaries += skimCutFlow 
-                    sectionsWithSummaries += '\n'
-                    
-    print(sectionsWithSummaries)
+                        sectionsWithSummaries += skimCutFlow 
+                        sectionsWithSummaries += '\n'
+                    else:
+                        sectionsWithSummaries += skimCutFlow 
+                        sectionsWithSummaries += '\n'
+    # end of loop over postprocess.cxx logRun_* files
 
-    # Replace the dummy section in the template
+    ######################################################### 
+    # Print yields if args.plotdir was specified
+    #########################################################   
+    yieldReport = ''
+    varsToPrint = ['pt_1', 'pt_2', 'm_vis']
+    if (args.plotdir != ""):
+        for subdir, dirs, files in os.walk(args.plotdir):
+            for f in files:
+                # Only check pt_vis
+                for var in varsToPrint:
+                    if ('%s_yields' % var) in f:
+                        logname = os.path.basename(f)
+                        print(">>> " + logname)
+                        # Get the contents of the file                              
+                        content = getFileContent(os.path.join(subdir, f))
+                        header = '\section{%s}' % escape_latex(logname)
+                        # print(header)
+                        # print(content)
+                        # print(f)
+                        yieldReport += header
+                        yieldReport += content
+    
+    # [!!!] Add the yield report to the top of the cutflow report
+    sectionsWithSummaries = (yieldReport + sectionsWithSummaries)
+    print(sectionsWithSummaries)
+    
+    ##########################################################
+    # Open the template and replace placeholders with reports
+    ##########################################################
     template = open("templateCutflowReport.tex", "rt")
     report   = open("report.tex",         "wt")
                     
@@ -110,12 +164,24 @@ def main():
             
     template.close()
     report.close()
-                            
-    # Build the report
+    
+    ##########################################################
+    # Build the report and copy it to the relevant places
+    ##########################################################
+    # Build the PDF
     command = 'pdflatex report.tex' 
     os.system(command)
+    
+    # If args.plotdir was specified, copy the report there
+    if (args.plotdir != ""):
+        command = 'cp report.pdf %s' % (args.plotdir)
+        os.system(command)
+        print('Report.pdf copied to %s' % (args.plotdir))
+
+    # Copy the report to the postprocess.cxx dir
     command = 'mv report.pdf %s' % (args.rootdir)
     os.system(command)
+    print('Report.pdf copied to %s' % (args.rootdir))
 
 if __name__ == "__main__":
     main()
