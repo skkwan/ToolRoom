@@ -82,7 +82,20 @@ def main():
                 with open(os.path.join(subdir, f)) as logfile:
                     # print(logfile.read())
                     # Skip the first five lines (RooFit header)
-                    skimCutFlow = logfile.readlines()[5:]    # use readlines to get a list
+                    cutFlow = logfile.readlines()[5:]    # use readlines to get a list
+                    skimCutFlow = []
+
+                    # Ignore any line in the log file thta contains one of these strings:
+                    # (alternate solution: in future log files, put "%%" in front of 
+                    #  std::cout print statements)
+                    ignore = ["1 b-tag jet:", "2 b-tag jet:", "%%"]
+
+                    # Loop over the lines in the logfile
+                    for i in range(len(cutFlow)):
+                        if any(x in cutFlow[i] for x in ignore):
+                            continue
+                        # print("line", i, ":", cutFlow[i])
+                        skimCutFlow.append(cutFlow[i])
                     skimCutFlow = '\n'.join(skimCutFlow)      # collapse the list back into one string
                     skimCutFlow = escape_latex(skimCutFlow)
                     
@@ -92,7 +105,8 @@ def main():
                     
                     sectionsWithSummaries += header + '\n'
                     if 'SUCCESS' not in skimCutFlow:
-                        sectionsWithSummaries += '[ERROR:] Run did not finish!'
+                        sectionsWithSummaries += '[ERROR:] Run did not finish! Printing cutflow anyway... \n'
+                        sectionsWithSummaries += skimCutFlow
                         samplesThatDidNotFinish += escape_latex(sample) + ', '
                     elif ('WARNING' in skimCutFlow) or ('ERROR' in skimCutFlow):
                         samplesWithWarnings     += escape_latex(sample) + ', '
@@ -111,9 +125,9 @@ def main():
     if (args.plotdir != ""):
         for subdir, dirs, files in os.walk(args.plotdir):
             for f in files:
-                # Only check pt_vis
+                
                 for var in varsToPrint:
-                    if ('%s_yields' % var) in f:
+                    if (('%s_yields' % var) == f):
                         logname = os.path.basename(f)
                         print(">>> " + logname)
                         # Get the contents of the file                              
@@ -127,7 +141,7 @@ def main():
     
     # [!!!] Add the yield report to the top of the cutflow report
     sectionsWithSummaries = (yieldReport + sectionsWithSummaries)
-    print(sectionsWithSummaries)
+    # print(sectionsWithSummaries)
     
     ##########################################################
     # Open the template and replace placeholders with reports
