@@ -121,7 +121,8 @@ def main():
     # Print yields if args.plotdir was specified
     #########################################################   
     yieldReport = ''
-    varsToPrint = ['pt_1', 'pt_2', 'm_vis']
+    varsToPrint = ['pt_1', 'pt_2', 'm_vis', 'jpt_1', 'jpt_2', 
+                   'bpt_deepflavour_1', 'bpt_deepflavour_2']
     if (args.plotdir != ""):
         for subdir, dirs, files in os.walk(args.plotdir):
             for f in files:
