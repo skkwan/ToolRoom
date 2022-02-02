@@ -4,6 +4,7 @@
 # Stand-alone to print branch names of n-tuple to a text file.
 #
 # Usage: python3 getBranchNames.py <path to ntuple> <path to tree> <output text file name>
+# E.g.: python3 getBranchNames.py /afs/cern.ch/user/s/skkwan/tree_1.root Events list.txt
 ###########################################################################################
 
 import argparse
