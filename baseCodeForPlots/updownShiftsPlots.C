@@ -43,6 +43,8 @@ void applyLegStyle(TLegend *leg){
   leg->SetBorderSize(0);
   leg->SetHeader("");
   leg->SetShadowColor(0);
+  leg->SetTextSize(0.05);   // make it larger than default
+  leg->SetTextFont(42);     // un-bold (62 is bold helvetica, the default)
 }
  
 /* Generate a comparison plot of variable with systematics varUp and varDown. Assumes that these histograms already exist in the
@@ -57,8 +59,8 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
  
 
   TString variable = process + baseVariable;
-    TString varUp    = process + baseVariable + systematic + "Up";
-   TString varDown  = process + baseVariable + systematic + "Down";
+  TString varUp    = process + baseVariable + systematic + "Up";
+  TString varDown  = process + baseVariable + systematic + "Down";
 
   // TString variable = baseVariable;
   // TString varUp    = baseVariable + systematic + "Up";
@@ -71,7 +73,7 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
   //applyPadStyle(pad1);
  
-  TLegend *leg = new TLegend(0.60,0.75,0.85,0.9);
+  TLegend *leg = new TLegend(0.50,0.7,0.9,1.0);
   applyLegStyle(leg);
  
   TFile *file = new TFile(inputDirectory);
@@ -92,8 +94,8 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   file->GetObject(varDown, hDown);
 
   if (hCenter == 0) {
-    std::cout << "[ERROR:] Failed to histogram called " 
-              << variable << ", " << varUp << ",  and " << varDown << " exist in the input file, exiting" << std::endl;
+    std::cout << "[ERROR:] Failed to find histogram called " 
+              << variable << ", " << varUp << ",  and " << varDown << " in the input file, exiting" << std::endl;
     return 0;
   }
   if (hUp == 0) {
@@ -108,6 +110,10 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
     return 0;
 
   }
+  float yieldCenter = hCenter->Integral();
+  float yieldUp     = hUp->Integral();
+  float yieldDown   = hDown->Integral();
+
   hCenter->SetMarkerColor(0);
 //  hCenter->SetFillStyle(1001);
 //  hCenter->SetFillColorAlpha(kBlack, 0.1);
@@ -130,14 +136,21 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   //   hCenter->Scale(1/hCenter->Integral());
   //   Tcan->SetLogy();
 
-  hCenter->Draw("HIST");  
-  hUp->Draw("HIST same"); 
-  hDown->Draw("HIST same");
   
-  hCenter->GetXaxis()->SetTitle(baseVariable+systematic);
-  hCenter->GetYaxis()->SetTitle("Yield");
-hCenter->GetXaxis()->SetTitleSize(0.06); // default is 0.03     
-hCenter->GetYaxis()->SetTitleSize(0.06); // default is 0.03     
+  hUp->Draw("HIST"); 
+  hDown->Draw("HIST same");
+  hCenter->Draw("HIST same");  
+
+  
+  // This has to be the first histogram we declare above or the x- and y-axes labels will not show up
+  hUp->GetXaxis()->SetTitle(baseVariable+systematic);
+  hUp->GetYaxis()->SetTitle("Yield (not normalized)");
+  hUp->GetXaxis()->SetTitleSize(0.06); // default is 0.03     
+  hUp->GetYaxis()->SetTitleSize(0.06); // default is 0.03     
+
+  // Make more room at the top for the legend
+  float max = hUp->GetMaximum(); 
+  hUp->SetMaximum(max * 1.45);  
   /*
   float max = 10;
   if(Fake->GetXaxis()->GetBinCenter( Fake->GetMaximumBin() ) > hCenter->GetXaxis()->GetBinCenter( hCenter->GetMaximumBin() ) )
@@ -152,11 +165,24 @@ hCenter->GetYaxis()->SetTitleSize(0.06); // default is 0.03
   //leg->AddEntry(NoIso,"No Isolation","l");
   //  leg->AddEntry(hCenter,"#tau_{h} Gen-Vis p_{T}>20 GeV","l");
   //  leg->AddEntry(Fake,"Fake Background","l");
-  leg->AddEntry(hCenter, "Central value", "l");
-  leg->AddEntry(hUp,     "Up",            "l");
-  leg->AddEntry(hDown,   "Down",          "l");
+
+  leg->AddEntry(hDown,   TString::Format("Down:   yield: %0.2f", yieldDown),   "l");
+  leg->AddEntry(hCenter, TString::Format("Central: yield: %0.2f", yieldCenter), "l");
+  leg->AddEntry(hUp,     TString::Format("Up:        yield: %0.2f", yieldUp),     "l");
+
   leg->Draw();
- 
+
+
+  // TLatex *latex = new TLatex(); 
+  // latex->SetNDC();
+  // latex->SetTextFont(42);
+  // latex->SetTextColor(kBlack);
+  // float commentaryXpos = 0.47;
+  // //latex->DrawLatex(0.80, 0.920, "#scale[0.8]{0 PU}");
+  // latex->DrawLatex(commentaryXpos, 0.820, TString::Format("Yield up: %f", yieldUp));
+  // latex->DrawLatex(commentaryXpos, 0.780, TString::Format("Yield center: %f", yieldCenter));
+  // latex->DrawLatex(commentaryXpos, 0.740, TString::Format("Yield down: %f", yieldDown));
+  Tcan->Update();
   Tcan->cd();
 
   //TPad* pad2 = new TPad("pad2","The lower pad",0,0,0.98,0.25);
@@ -168,7 +194,7 @@ hCenter->GetYaxis()->SetTitleSize(0.06); // default is 0.03
 
  
   Tcan->cd();
-  Tcan->SetLogy();
+  //Tcan->SetLogy();
   Tcan->SaveAs(outputDirectory+baseVariable+systematic+".pdf");
   Tcan->SaveAs(outputDirectory+baseVariable+systematic+".png");
  
