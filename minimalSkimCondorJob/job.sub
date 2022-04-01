@@ -1,0 +1,13 @@
+executable	= /afs/cern.ch/work/s/skkwan/public/hToAA/syncNanoAOD/myscript.sh
+
+getenv          = True	
+
++JobFlavour     = "espresso"
+
+arguments	= myexample.txt
+
+output		= condor.out
+error           = condor.err
+log             = condor.log
+
+queue
