@@ -30,7 +30,7 @@ print("Directory to use: " + args.rootdir)
 
 for subdir, dirs, files in os.walk(args.rootdir):
     sampleName = os.path.basename(os.path.normpath(subdir))
-    outputFile = args.rootdir + "hist_" + sampleName + ".root"
+    outputFile = args.rootdir + "hists_" + sampleName + ".root"
     
     targetFile = args.rootdir + sampleName + "/*.root"
     if (os.path.exists(outputFile) and not args.recreate):
