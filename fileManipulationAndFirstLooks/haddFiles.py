@@ -15,8 +15,8 @@ import sys
 
 
 parser = argparse.ArgumentParser(description='Hadd files from a directory with sub-directories')
-parser.add_argument('--year',    dest='year',    help='Year of dataset')
-parser.add_argument('--rootdir', dest='rootdir', help='Path to directory')
+parser.add_argument('--year',    dest='year',    help='Year of dataset', required=True)
+parser.add_argument('--rootdir', dest='rootdir', help='Path to directory', required=True)
 parser.add_argument('--recreate',  dest='recreate',  action='store_true')
 parser.add_argument('--execute', dest='execute', action='store_true')
 parser.set_defaults(recreate=False)
