@@ -2,11 +2,18 @@
 
 Based on [UWisc T2 instructions](https://www.hep.wisc.edu/cms/comp/faq.html#example-of-how-to-copy):
 
-1. Log onto `lxplus`, run this:
+1. On UWisc `hdfs` make the directory to copy stuff to
 
-`gfal-copy -p -r /eos/user/s/skkwan/hToAA/condor/Apr-04-2022-18h26m-DataMC2018_JERsys_withTES/ davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/hToAA/skims/2018/` 
+```
+# On UWisc
+mkdir /hdfs/store/user/skkwan/hToAA/skims/2018/Apr-04-2022-18h26m-DataMC2018_JERsys_withTES
+```
 
-2. This will write files to the UWisc T2 hdfs storage area (note in step 1 we omitted the `/hdfs/` part)
+2. Log onto `lxplus`, run the gfal-copy command. See [documentation](https://www.systutorials.com/docs/linux/man/1-gfal-copy/)
 
-`/hdfs/store/user/skkwan/hToAA/skims/2018`
+```
+# On lxplus
+gfal-copy -p -r --timeout 999999 /eos/user/s/skkwan/hToAA/condor/Apr-04-2022-18h26m-DataMC2018_JERsys_withTES/ davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/hToAA/skims/2018/Apr-04-2022-18h26m-DataMC2018_JERsys_withTES/
+```
 
+For some reason `gfal-copy` doesn't like wildcards.
