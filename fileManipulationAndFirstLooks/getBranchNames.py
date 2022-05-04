@@ -20,8 +20,10 @@ def main(filepath, treepath, output):
     # Create output text file                                                                   
     f = open(output, "w+")
 
+    print(">>> Only writing branches with Jet or MET:")
     for branch in tree.GetListOfBranches():
-        f.write(branch.GetName()+"\n")
+        if (("Jet_" in str(branch)) or "MET_" in str(branch)):
+            f.write(branch.GetName()+"\n")
         
 
     f.close()
