@@ -58,9 +58,9 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   setTDRStyle();
  
 
-  TString variable = process + baseVariable;
-  TString varUp    = process + baseVariable + systematic + "Up";
-  TString varDown  = process + baseVariable + systematic + "Down";
+  TString variable = process + "_" + baseVariable;
+  TString varUp    = process + "_" + baseVariable + systematic + "Up";
+  TString varDown  = process + "_" + baseVariable + systematic + "Down";
 
   // TString variable = baseVariable;
   // TString varUp    = baseVariable + systematic + "Up";
@@ -73,7 +73,7 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
   //applyPadStyle(pad1);
  
-  TLegend *leg = new TLegend(0.50,0.7,0.9,1.0);
+  TLegend *leg = new TLegend(0.50,0.62,0.9,0.92);
   applyLegStyle(leg);
  
   TFile *file = new TFile(inputDirectory);
@@ -95,18 +95,18 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
 
   if (hCenter == 0) {
     std::cout << "[ERROR:] Failed to find histogram called " 
-              << variable << ", " << varUp << ",  and " << varDown << " in the input file, exiting" << std::endl;
+              << variable << " in the input file, exiting" << std::endl;
     return 0;
   }
   if (hUp == 0) {
-    std::cout << "[ERROR:] Failed to histogram called " 
-              << varUp << " exist in the input file, exiting" << std::endl;
+    std::cout << "[ERROR:] Failed to find histogram called " 
+              << varUp << " in the input file, exiting" << std::endl;
     return 0;
 
   }
   if (hDown == 0) {
-    std::cout << "[ERROR:] Failed to histogram called " 
-              << varDown << " exist in the input file, exiting" << std::endl;
+    std::cout << "[ERROR:] Failed to find histogram called " 
+              << varDown << " in the input file, exiting" << std::endl;
     return 0;
 
   }
@@ -123,13 +123,13 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   hDown->SetMarkerColor(0);
 //  hDown->SetFillStyle(1001);
 //  hDown->SetFillColorAlpha(kBlue+2, 0.1);
-  hDown->SetLineWidth(1);
-  hDown->SetLineColor(kGreen);
+  hDown->SetLineWidth(2);
+  hDown->SetLineColor(kGreen+1);
 
   hUp->SetMarkerColor(0);
 //  hUp->SetFillStyle(1001);
 //  hUp->SetFillColorAlpha(kRed+2, 0.1);
-  hUp->SetLineWidth(1);
+  hUp->SetLineWidth(2);
   hUp->SetLineColor(kRed+2);
 
   //   hUp->Scale(1/hUp->Integral());
@@ -144,7 +144,7 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   
   // This has to be the first histogram we declare above or the x- and y-axes labels will not show up
   hUp->GetXaxis()->SetTitle(baseVariable+systematic);
-  hUp->GetYaxis()->SetTitle("Yield (not normalized)");
+  hUp->GetYaxis()->SetTitle("Yield");
   hUp->GetXaxis()->SetTitleSize(0.06); // default is 0.03     
   hUp->GetYaxis()->SetTitleSize(0.06); // default is 0.03     
 
@@ -165,6 +165,8 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   //leg->AddEntry(NoIso,"No Isolation","l");
   //  leg->AddEntry(hCenter,"#tau_{h} Gen-Vis p_{T}>20 GeV","l");
   //  leg->AddEntry(Fake,"Fake Background","l");
+  leg->SetTextFont(42);
+  leg->SetHeader(process);
 
   leg->AddEntry(hDown,   TString::Format("Down:   yield: %0.2f", yieldDown),   "l");
   leg->AddEntry(hCenter, TString::Format("Central: yield: %0.2f", yieldCenter), "l");
@@ -196,7 +198,7 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   Tcan->cd();
   //Tcan->SetLogy();
   Tcan->SaveAs(outputDirectory+baseVariable+systematic+".pdf");
-  Tcan->SaveAs(outputDirectory+baseVariable+systematic+".png");
+  // Tcan->SaveAs(outputDirectory+baseVariable+systematic+".png");
  
   delete Tcan;
 
