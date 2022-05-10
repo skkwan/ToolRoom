@@ -1,0 +1,1 @@
+root://cmsxrootd.fnal.gov//store/user/skkwan/NanoPost/VBFHToTauTau_M125_13TeV_powheg_pythia8/NanoPost_VBFHToTauTau_RunIIAutumn18NanoAODv7-Nano02Apr2020_102X/220204_160352/0000/tree_1.root
