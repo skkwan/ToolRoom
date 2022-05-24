@@ -9,8 +9,9 @@ On the help site (https://www.hep.wisc.edu/cms/comp/faq.html#example-of-how-to-c
 gfal-copy -p -r srm://srm-eoscms.cern.ch//eos/user/s/skkwan/hToAA/condor/May-21-2022-02h23m-DataMC2018_withGen davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018
 ```
  
-What works is logging onto lxplus and removing the `srm://srm-eoscms.cern.ch/` portion:
+What works is logging onto lxplus and removing the `srm://srm-eoscms.cern.ch/` portion: make sure to also set a
+maximum time or it will time out very quickly:
 
 ```bash
- gfal-copy -p -r /eos/user/s/skkwan/hToAA/condor/May-21-2022-02h23m-DataMC2018_withGen davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018
+ gfal-copy -p -r -t 999999999 /eos/user/s/skkwan/hToAA/condor/May-21-2022-02h23m-DataMC2018_withGen davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018
 ```
