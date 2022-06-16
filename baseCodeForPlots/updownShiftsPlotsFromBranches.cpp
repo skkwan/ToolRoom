@@ -25,8 +25,8 @@
 #include "tdrstyle.C"
 #include "CMS_lumi.h"
 
-#ifndef UP_DOWN_SHIFTS_PLOTS_INCL
-#define UP_DOWN_SHIFTS_PLOTS_INCL
+#ifndef UP_DOWN_SHIFTS_PLOTS_FROM_BRANCHES_INCL
+#define UP_DOWN_SHIFTS_PLOTS_FROM_BRANCHES_INCL
  
 /* Apply template style to a TPad* pad1. */
 void applyPadStyle(TPad* pad1){
@@ -51,20 +51,20 @@ void applyLegStyle(TLegend *leg){
    input file. 
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "name". The histogram has (bins)
    number of bins and ranges from integers low to high. */
-int updownShiftsPlots(TString process, TString baseVariable, TString systematic, TString inputDirectory, TString outputDirectory){ 
+int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString systematic, TString treename, TString inputDirectory, TString outputDirectory){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
   setTDRStyle();
  
 
-  TString variable = process + "_" + baseVariable;
-  TString varUp    = process + "_" + baseVariable + systematic + "Up";
-  TString varDown  = process + "_" + baseVariable + systematic + "Down";
+  // TString variable = process + "_" + baseVariable;
+  // TString varUp    = process + "_" + baseVariable + systematic + "Up";
+  // TString varDown  = process + "_" + baseVariable + systematic + "Down";
 
-  // TString variable = baseVariable;
-  // TString varUp    = baseVariable + systematic + "Up";
-  // TString varDown  = baseVariable + systematic + "Down";
+  TString variable = baseVariable;
+  TString varUp    = baseVariable + systematic + "Up";
+  TString varDown  = baseVariable + systematic + "Down";
  
   //  TFile* tauFile = new TFile("dummy");
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
@@ -83,29 +83,37 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
     return 0;
   }
 
-  TH1D *hCenter = 0;
-  file->GetObject(variable, hCenter);
+  TTree *tree;
+  file->GetObject(treename, tree);
+   if(tree==0){
+    std::cout<<"[ERROR:] Tree "<< treename << " NOT FOUND; EXITING"<<std::endl;
+    return 0;
+  }
 
 
-  TH1D *hUp = 0;
-  file->GetObject(varUp, hUp);
+  TH1D *hCenter = new TH1D("hCenter", "hCenter", 60, 0, 600);
+  tree->Draw(variable + " >> hCenter");
 
-  TH1D *hDown = 0;
-  file->GetObject(varDown, hDown);
+
+  TH1D *hUp = new TH1D("hUp", "hUp", 60, 0, 600);
+  tree->Draw(varUp + " >> hUp");
+
+  TH1D *hDown = new TH1D("hDown", "hDown", 60, 0, 600);
+  tree->Draw(varDown + " >> hDown");
 
   if (hCenter == 0) {
-    std::cout << "[ERROR:] Failed to find histogram called " 
+    std::cout << "[ERROR:] Failed to extract histogram called " 
               << variable << " in the input file, exiting" << std::endl;
     return 0;
   }
   if (hUp == 0) {
-    std::cout << "[ERROR:] Failed to find histogram called " 
+    std::cout << "[ERROR:] Failed to extract histogram called " 
               << varUp << " in the input file, exiting" << std::endl;
     return 0;
 
   }
   if (hDown == 0) {
-    std::cout << "[ERROR:] Failed to find histogram called " 
+    std::cout << "[ERROR:] Failed to extract histogram called " 
               << varDown << " in the input file, exiting" << std::endl;
     return 0;
 
@@ -143,8 +151,8 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
 
   
   // This has to be the first histogram we declare above or the x- and y-axes labels will not show up
-  hUp->GetXaxis()->SetTitle(baseVariable+systematic);
-  hUp->GetYaxis()->SetTitle("Yield");
+  hUp->GetXaxis()->SetTitle(baseVariable+systematic+": no signal region cuts");
+  hUp->GetYaxis()->SetTitle("Yield (not normalized)");
   hUp->GetXaxis()->SetTitleSize(0.06); // default is 0.03     
   hUp->GetYaxis()->SetTitleSize(0.06); // default is 0.03     
 
@@ -166,7 +174,7 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   //  leg->AddEntry(hCenter,"#tau_{h} Gen-Vis p_{T}>20 GeV","l");
   //  leg->AddEntry(Fake,"Fake Background","l");
   leg->SetTextFont(42);
-  leg->SetHeader(process);
+  leg->SetHeader(process + ": one file only");
 
   leg->AddEntry(hDown,   TString::Format("Down:   yield: %0.2f", yieldDown),   "l");
   leg->AddEntry(hCenter, TString::Format("Central: yield: %0.2f", yieldCenter), "l");
