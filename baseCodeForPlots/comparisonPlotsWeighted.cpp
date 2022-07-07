@@ -54,21 +54,23 @@ void applyLegStyle(TLegend *leg){
  
 /* Generate a comparison plot of "variable", using the gen-level sigCut, and selecting fakes using bkgCut. treePath specifies the tree in the ROOT file to use.
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "name". The histogram has (bins)
-   number of bins and ranges from integers low to high. */
-int comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TString bkgCut,
-                            TString sigLabel, TString bkgLabel,
-                            TString legTitle,
-                            TString treePath,
-                            TString inputDirectory, TString outputDirectory, TString name, int bins, int low, int high,
-                            bool doDistributionStyle = true,
-                            bool showBackground = true){ 
+   number of bins and ranges from integers low to high. 
+   Returns the yield of the signal histogram. */
+float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TString bkgCut,
+                             TString sigLabel, TString bkgLabel,
+                             TString legTitle,
+                             TString treePath,
+                             TString inputDirectory, TString outputDirectory, TString name, int bins, int low, int high,
+                             int totalNEvents = 1.0,
+                             bool doDistributionStyle = true,
+                             bool showBackground = true){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
   setTDRStyle();
  
   //int bins = 30;
-  //int low = 0;
+  //int low = 0; 
   //int high = 15;
  
   //  TFile* tauFile = new TFile("dummy");
@@ -78,7 +80,7 @@ int comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TS
   //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
   //applyPadStyle(pad1);
  
-  TLegend *leg = new TLegend(0.50,0.65,0.95,0.9);
+  TLegend *leg = new TLegend(0.40,0.65,0.95,0.9);
   applyLegStyle(leg);
  
   TFile *file = new TFile(inputDirectory);
@@ -97,12 +99,12 @@ int comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TS
   if(tree == 0){
     std::cout<<"ERROR Tau Tree is "<< tree<<" NOT FOUND; EXITING"<<std::endl;
     return 0;
-  }
+  } 
  
   TH1F *True = new TH1F("True","True",bins,low,high);
-  tree->Draw(variable+">>+True", sigCut);
+  float sigYield = tree->Draw(variable+">>+True", sigCut);
   TH1F *Fake = new TH1F("Fake","Fake",bins,low,high);
-  tree->Draw(variable+">>+Fake", bkgCut);  
+  float bkgYield = tree->Draw(variable+">>+Fake", bkgCut);  
  
   /* Compute the ratio by cloning the True histogram, subtracting the Fake values,
      and dividing it by the Fake value. */
@@ -176,10 +178,27 @@ int comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TS
 
   leg->SetHeader(legTitle);
   leg->AddEntry(True, sigLabel, "l");
+  // Also show the yield as int
+  std::string sigYieldLabel = "nEvents: " + std::to_string((int) sigYield);
+  leg->AddEntry((TObject*)0, sigYieldLabel.c_str(), "");
+
+  // Also show % of original events
+  if (totalNEvents != 1.0) {
+    float percentage = (sigYield/totalNEvents) * 100;
+    std::cout << ">>> Out of " << totalNEvents << " events with gen #tau#tau, " << sigYield << " make the cut" << std::endl;
+    TString percLabel = TString::Format("%.2f%% of events with gen #tau#tau", percentage);  // X% of original events
+    leg->AddEntry((TObject*)0, percLabel, "");
+  }
 
   if (showBackground) {
-  leg->AddEntry(Fake, bkgLabel, "l");
+    leg->AddEntry(Fake, bkgLabel, "l");
+    // Also show the yield as int
+    std::string bkgYieldLabel = "No. of events: " + std::to_string((int) bkgYield);
+    leg->AddEntry((TObject*)0, bkgYieldLabel.c_str(), "");
+
   } 
+
+
 
   applyLegStyle(leg);
 
@@ -202,7 +221,7 @@ int comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TS
  
   delete Tcan;
 
-  return 1;
+  return sigYield;
 
 }
 
