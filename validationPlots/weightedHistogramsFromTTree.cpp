@@ -25,11 +25,7 @@ void weightedHistogramsFromTTree()
 
   float xmax_pt, xmax_mtt, xmax_pTtt;
 
-  float lumi, xsec, nEvents;  // temp, unused
   float nOriginalEvents = 1.0;  // number of events in the m_{tautau} histogram with no cuts applied
-
-  // Run 2
-  lumi = 59740.0; // temp, unused
 
 
   for (unsigned int i = 0; i < samples.size(); i++) {
@@ -88,7 +84,6 @@ void weightedHistogramsFromTTree()
     nOriginalEvents = 1.0;
     nOriginalEvents = comparisonPlotsWeighted("gen_mtt", "Gen m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory, samples[i] + "_" + "gen_mtt_" + treePath, 60, 0, xmax_mtt, nOriginalEvents, doDistributionStyle, showBackground);
 
-    // weight = 1.0; // (lumi * xsec / nEvents);
 
     treePath = "mutau_tree";
     comparisonPlotsWeighted("genPt_tau1", "Gen p_{T} of gen tau 1", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory, samples[i] + "_" + "pt_tau1", 60, 0, xmax_pt, nOriginalEvents, doDistributionStyle, showBackground);
