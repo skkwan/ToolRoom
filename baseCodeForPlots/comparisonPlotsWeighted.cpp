@@ -122,9 +122,16 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
   std::cout << "Sig weight: " << sigWeight << std::endl;
   std::cout << "Bkg weight: " << bkgWeight << std::endl;
   TH1F *True = new TH1F("True","True",bins,low,high);
-  float sigYield = tree->Draw(variable+">>+True", sigWeight);
+  float sigEvents = tree->Draw(variable+">>+True", sigWeight);
+  
+  // Add the overflow bin
+  std::cout << "nbins: " << True->GetNbinsX() << std::endl;
+  float overflow = True->GetBinContent(True->GetNbinsX() + 1);
+  std::cout << "adding overflow to sigEvents: " << overflow << std::endl;
+  sigEvents += overflow;
+  
   TH1F *Fake = new TH1F("Fake","Fake",bins,low,high);
-  float bkgYield = tree->Draw(variable+">>+Fake", bkgWeight); 
+  float bkgEvents = tree->Draw(variable+">>+Fake", bkgWeight); 
  
   /* Compute the ratio by cloning the True histogram, subtracting the Fake values,
      and dividing it by the Fake value. */
@@ -199,24 +206,24 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
   leg->SetHeader(legTitle);
   leg->AddEntry(True, sigLabel, "l");
   // Also show the yield as int, and yield as an integral
-  TString sigEventsLabel = "nEvents: " + TString::Format("%i", (int) sigYield);
-  TString sigYieldLabel  = "Yield: " + TString::Format("%.2f", True->Integral());
+  TString sigEventsLabel = "nEvents (incl. overflow): " + TString::Format("%i", (int) sigEvents);
+  TString sigYieldLabel  = "Yield shown: " + TString::Format("%.2f", True->Integral());
   leg->AddEntry((TObject*)0, sigEventsLabel, "");
   leg->AddEntry((TObject*)0, sigYieldLabel, "");
 
   // Also show % of original events
   if (totalNEvents != 1.0) {
-    float percentage = (sigYield/totalNEvents) * 100;
-    std::cout << ">>> Out of " << totalNEvents << " events with gen #tau#tau, " << sigYield << " make the cut" << std::endl;
-    TString percLabel = TString::Format("%.2f%% of events with gen #tau#tau", percentage);  // X% of original events
-    leg->AddEntry((TObject*)0, percLabel, "");
+    float percentage = (sigEvents/totalNEvents) * 100;
+    std::cout << ">>> Out of " << totalNEvents << " events with gen #tau#tau, " << sigEvents << " make the cut" << std::endl;
+    // TString percLabel = TString::Format("%.2f%% of events with gen #tau#tau", percentage);  // X% of original events
+    // leg->AddEntry((TObject*)0, percLabel, "");
   }
 
   if (showBackground) {
     leg->AddEntry(Fake, bkgLabel, "l");
     // Also show the yield as int
-    std::string bkgYieldLabel = "No. of events: " + std::to_string((int) bkgYield);
-    leg->AddEntry((TObject*)0, bkgYieldLabel.c_str(), "");
+    // std::string bkgYieldLabel = "No. of events: " + std::to_string((int) bkgYield);
+    // leg->AddEntry((TObject*)0, bkgYieldLabel.c_str(), "");
 
   } 
 
@@ -243,7 +250,7 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
  
   delete Tcan;
 
-  return sigYield;
+  return sigEvents;
 
 }
 

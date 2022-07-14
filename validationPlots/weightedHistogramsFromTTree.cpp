@@ -13,13 +13,16 @@ void weightedHistogramsFromTTree()
   // TString outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/reco-plots/";
 
   //TString inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/final-ntuples/Jul-12-2022-15h55m-Preapproval_check/";
-  TString inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/final-ntuples/Jul-13-2022-14h36m-Data_all/";
+  //TString inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/final-ntuples/Jul-13-2022-14h36m-Data_all/";
+  //TString inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/final-ntuples/Jul-13-2022-17h18m-LowMass_with_SR_filtered/";
+  TString inputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/final-ntuples/Jul-13-2022-17h21m-Data_LowMass_with_SR_filtered/";
+
   TString outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/preapprovalChecks/final-plots/";
 
  // std::vector<TString> samples = {"TTTo2L2Nu", "DYJetsToLL_M-10to50", "DYJetsToLL", 
  //                                 "SUSYGluGluToHToAA_AToBB_AToTauTau_M-45"};
-  //std::vector<TString> samples = {"DYJetsToLL_M-10to50", "TTTo2L2Nu"};
-  std::vector<TString> samples = {"SingleMuon-Run2018ABCD"};
+  std::vector<TString> samples = {"DYJetsToLL_M-10to50", "TTTo2L2Nu"};
+  //std::vector<TString> samples = {"SingleMuon-Run2018ABCD"};
 
 
   TString sigCut;     // selection cut on n-tuple for "signal"
@@ -156,39 +159,39 @@ void weightedHistogramsFromTTree()
 
     float xmax_m_sv = 800;
 
-    // // m_sv with no cuts
-   //  treePath = "mutau_tree";
-   //  sigLabel = "Signal region";
-   //  sigCut = "";
-   //  bkgCut = "";
-   //  // weight="weight_passIso";
-   //  //weight = "weight_initial";
-   //  if (samples[i] == "DYJetsToLL_M-10to50") { weight = "weight_initial * weight_DYJets"; }
-   //  // comparisonPlotsWeighted("m_sv", "SVFit m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory,
-   //  //			    samples[i] + "_" + "m_sv", 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
-
-
-   //  // m_sv with <= 20 GeV cut
-   //  sigLabel = "Signal region, gen m_{#tau#tau} #leq 20 GeV";
-   //  sigCut = "(gen_mtt <= 20)";
-   //  bkgCut = "";
-   //  weight = "weight_initial";
-   // if (samples[i] == "DYJetsToLL_M-10to50") { weight = "weight_initial * weight_DYJets"; }
-   //  comparisonPlotsWeighted("m_sv", "SVFit m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory,
-   // 			    samples[i] + "_" + "m_sv_with_gen_mtt_leq_20", 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
-    
-
+    // m_sv with no cuts
+    treePath = "mutau_tree";
+    sigLabel = "Signal region";
     sigCut = "";
     bkgCut = "";
-    weight = "";
-    sigLabel = "m_sv";
+    weight = "weight_initial";
+    if (samples[i] == "DYJetsToLL_M-10to50") { weight = "weight_initial * weight_DYJets"; }
     comparisonPlotsWeighted("m_sv", "SVFit m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory,
-			    samples[i], 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
+    			    samples[i] + "_" + "m_sv_fullSR", 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
 
-    sigCut = "m_sv <= 50";
-    sigLabel = "m_sv <= 50";
+
+    // m_sv with <= 20 GeV cut
+    sigLabel = "Signal region, gen m_{#tau#tau} #leq 20 GeV";
+    sigCut = "(gen_mtt <= 20)";
+    bkgCut = "";
+    weight = "weight_initial";
+    if (samples[i] == "DYJetsToLL_M-10to50") { weight = "weight_initial * weight_DYJets"; }
     comparisonPlotsWeighted("m_sv", "SVFit m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory,
-			    samples[i] + "_" + "m_sv_leq_50", 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
+    			    samples[i] + "_" + "m_sv_with_gen_mtt_leq_20_fullSR", 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
+    
+
+    // DATA
+    // sigCut = "";
+    // bkgCut = "";
+    // weight = "";
+    // sigLabel = "m_sv";
+    // comparisonPlotsWeighted("m_sv", "SVFit m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory,
+    // 			    samples[i], 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
+
+    // sigCut = "m_sv <= 50";
+    // sigLabel = "m_sv <= 50";
+    // comparisonPlotsWeighted("m_sv", "SVFit m_{#tau#tau}", sigCut, bkgCut, sigLabel, bkgLabel, legTitle, treePath, inputFile, outputDirectory,
+    // 			    samples[i] + "_" + "m_sv_leq_50", 60, 0, xmax_m_sv, nOriginalEvents, weight, doDistributionStyle, showBackground);
 
     
   }
