@@ -55,16 +55,23 @@ void applyLegStyle(TLegend *leg){
 /* Generate a comparison plot of "variable", using the gen-level sigCut, and selecting fakes using bkgCut. treePath specifies the tree in the ROOT file to use.
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "name". The histogram has (bins)
    number of bins and ranges from integers low to high. 
+   If totalnEvents != 1.0, also print the % of the yield in the histogram
+   weight:  reweight the histogram by that branch
+   If doDistributionStyle is true, plot the histogram(s) as distributions
+   If showBackground is true, plot the background histogram
    Returns the yield of the signal histogram. */
 float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, TString bkgCut,
-                             TString sigLabel, TString bkgLabel,
-                             TString legTitle,
-                             TString treePath,
-                             TString inputDirectory, TString outputDirectory, TString name, int bins, int low, int high,
-                             int totalNEvents = 1.0,
-                             bool doDistributionStyle = true,
-                             bool showBackground = true){ 
- 
+			      TString sigLabel, TString bkgLabel,
+			      TString legTitle,
+			      TString treePath,
+			      TString inputDirectory, TString outputDirectory, TString name, int bins, int low, int high,
+			      int totalNEvents = 1.0,
+			      TString weight = "",
+			      bool doDistributionStyle = true,
+			      bool showBackground = true){ 
+
+  std::cout << "sig  cut: " << sigCut << std::endl;
+  if (sigCut != "") { std::cout << "found a sig cut " << std::endl; }
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
   setTDRStyle();
@@ -80,7 +87,7 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
   //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
   //applyPadStyle(pad1);
  
-  TLegend *leg = new TLegend(0.40,0.65,0.95,0.9);
+  TLegend *leg = new TLegend(0.30,0.65,0.95,0.9);
   applyLegStyle(leg);
  
   TFile *file = new TFile(inputDirectory);
@@ -100,11 +107,31 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
     std::cout<<"ERROR Tau Tree is "<< tree<<" NOT FOUND; EXITING"<<std::endl;
     return 0;
   } 
- 
+
+  TString sigWeight;
+  TString bkgWeight;
+
+  if ((weight != "") && (sigCut != "")) { sigWeight = weight + "*" + sigCut; }
+  else if (weight != "")                {std::cout << "2" << std::endl; sigWeight = weight; }
+  else if (sigCut != "")                { sigWeight = sigCut; }
+
+  if ((weight != "") && (bkgCut != "")) { bkgWeight = weight + "*" + bkgCut; }
+  else if (weight != "")                {std::cout << "2" << std::endl; bkgWeight = weight; }
+  else if (bkgCut != "")                { bkgWeight = bkgCut; }
+
+  std::cout << "Sig weight: " << sigWeight << std::endl;
+  std::cout << "Bkg weight: " << bkgWeight << std::endl;
   TH1F *True = new TH1F("True","True",bins,low,high);
-  float sigYield = tree->Draw(variable+">>+True", sigCut);
+  float sigEvents = tree->Draw(variable+">>+True", sigWeight);
+  
+  // Add the overflow bin
+  std::cout << "nbins: " << True->GetNbinsX() << std::endl;
+  float overflow = True->GetBinContent(True->GetNbinsX() + 1);
+  std::cout << "adding overflow to sigEvents: " << overflow << std::endl;
+  sigEvents += overflow;
+  
   TH1F *Fake = new TH1F("Fake","Fake",bins,low,high);
-  float bkgYield = tree->Draw(variable+">>+Fake", bkgCut);  
+  float bkgEvents = tree->Draw(variable+">>+Fake", bkgWeight); 
  
   /* Compute the ratio by cloning the True histogram, subtracting the Fake values,
      and dividing it by the Fake value. */
@@ -178,23 +205,25 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
 
   leg->SetHeader(legTitle);
   leg->AddEntry(True, sigLabel, "l");
-  // Also show the yield as int
-  std::string sigYieldLabel = "nEvents: " + std::to_string((int) sigYield);
-  leg->AddEntry((TObject*)0, sigYieldLabel.c_str(), "");
+  // Also show the yield as int, and yield as an integral
+  TString sigEventsLabel = "nEvents (incl. overflow): " + TString::Format("%i", (int) sigEvents);
+  TString sigYieldLabel  = "Yield shown: " + TString::Format("%.2f", True->Integral());
+  leg->AddEntry((TObject*)0, sigEventsLabel, "");
+  leg->AddEntry((TObject*)0, sigYieldLabel, "");
 
   // Also show % of original events
   if (totalNEvents != 1.0) {
-    float percentage = (sigYield/totalNEvents) * 100;
-    std::cout << ">>> Out of " << totalNEvents << " events with gen #tau#tau, " << sigYield << " make the cut" << std::endl;
-    TString percLabel = TString::Format("%.2f%% of events with gen #tau#tau", percentage);  // X% of original events
-    leg->AddEntry((TObject*)0, percLabel, "");
+    float percentage = (sigEvents/totalNEvents) * 100;
+    std::cout << ">>> Out of " << totalNEvents << " events with gen #tau#tau, " << sigEvents << " make the cut" << std::endl;
+    // TString percLabel = TString::Format("%.2f%% of events with gen #tau#tau", percentage);  // X% of original events
+    // leg->AddEntry((TObject*)0, percLabel, "");
   }
 
   if (showBackground) {
     leg->AddEntry(Fake, bkgLabel, "l");
     // Also show the yield as int
-    std::string bkgYieldLabel = "No. of events: " + std::to_string((int) bkgYield);
-    leg->AddEntry((TObject*)0, bkgYieldLabel.c_str(), "");
+    // std::string bkgYieldLabel = "No. of events: " + std::to_string((int) bkgYield);
+    // leg->AddEntry((TObject*)0, bkgYieldLabel.c_str(), "");
 
   } 
 
@@ -221,7 +250,7 @@ float comparisonPlotsWeighted(TString variable, TString xLabel, TString sigCut, 
  
   delete Tcan;
 
-  return sigYield;
+  return sigEvents;
 
 }
 
