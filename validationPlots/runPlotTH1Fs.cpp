@@ -4,7 +4,7 @@
 
 #include "../baseCodeForPlots/plotTH1F.cpp"
 
-void runPlotTH1Fs()
+int runPlotTH1Fs()
 {
   
 
@@ -19,18 +19,49 @@ void runPlotTH1Fs()
     outputDirectory: the directory where the output plots will be saved.
     */
  
-  TString treePath = "mutau_slimmed/";
-  TString inputDirectory  = "~/Dropbox/Princeton G3/Pre-Thesis/hists.root";
-  TString outputDirectory = "myPlots/";
+  //  std::vector<TString> histPaths = {"", "b1_sr1", "b1_sr2", "b1_sr3", "b1_cr", "b2_sr1", "b2_sr2", "b2_cr"};
+  std::vector<std::string> categories = {"", "b1_sr1"};
+  std::string inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/Systematics/plots/10_03_22_Categories_syncOnly_check/histograms_VBFHToTauTau.root";
+  std::string outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G5/hToAA/Systematics/plots/10_03_22_Categories_syncOnly_check/";
 
-  TString label = "(MC) ggH #rightarrow aa #rightarrow bb#tau#tau, #mu#tau_{H} final state";
-  TString llabel = "#mu#tau_{H}";
-  bool isAU = false;
+  std::string sampleName = "VBFHToTauTau";
+  std::string label = "VBF H to #tau#tau, 2018 #mu#tau_{H}";
 
+  for ( std::string cat : categories ) {
+    std::cout << cat << std::endl;
 
-  plotTH1F("muPt", "Muon p_{T}", label, isAU, treePath, inputDirectory, outputDirectory);
-  plotTH1F("muEta", "Muon #eta", label, isAU, treePath, inputDirectory, outputDirectory);
-  plotTH1F("tauPt", "#tau_{H} p_{t}", label, isAU, treePath, inputDirectory, outputDirectory);
-  plotTH1F("tauEta", "#tau_{H} #eta", label, isAU, treePath, inputDirectory, outputDirectory);
-  
+    // Folder name
+    std::string folder;
+    if (cat == "") {
+      // Nominal
+      folder = "";
+    }
+    else {
+      // Category
+      folder = cat + "/";
+    }
+    
+    // Path to histogram in the file
+    TString inputName = TString::Format("%s%s_m_sv", folder.c_str(), sampleName.c_str());
+
+    // Label
+    TString axisLabel = "m_{sv}";
+
+    // Label text added to plot
+    TString additionalLabel = TString::Format("%s %s", label.c_str(), cat.c_str());
+
+    // Path to output .pdf file
+    TString outputName  = TString::Format("%s/%s_%s_m_sv.pdf", outputDirectory.c_str(), sampleName.c_str(), cat.c_str());
+
+    // Nominal
+    if (cat == "") {
+      outputName = TString::Format("%s/%s_m_sv.pdf", outputDirectory.c_str(), sampleName.c_str());
+    }
+
+    std::cout << outputName << std::endl;
+    plotTH1D(inputDirectory, inputName, axisLabel, additionalLabel, outputName);
+  }
+
+  return 1; 
+
 }

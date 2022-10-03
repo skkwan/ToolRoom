@@ -47,22 +47,22 @@ void applyLegStyle(TLegend *leg){
 
  
 /* Read in and plot an EXISTING TH1F:
-    th1fName :  the name of the TH1F inside the file (usually the name of the variable).
+    inputName :  the name of the TH1F inside the file (usually the name of the variable).
     xLabel   :  the x-axis label on the plot.
     paveText :  text to go in a TPave box. 
     isAU     : if True, normalize the plot so the area under the curve is 1, and set y-axis title to "A.U.".
                if False, do not normalize and set y-axis title to "Counts".
-    histPath :  the path to the TH1F inside the file (usually the name of the folder in the ROOT file).
+    histFolder :  the folder the TH1F is in
     inputDirectory : the path to the ROOT file (~/myRepo/input.root).
     outputDirectory: the directory where the output plots will be saved.
 */
 
-int plotTH1F(TString th1fName, 
-             TString xLabel, TString paveText,
-             bool isAU,
-             TString histPath, 
-			       TString inputDirectory,
-             TString outputDirectory){ 
+int plotTH1D(TString inputDirectory,
+             TString inputName, 
+             TString xLabel,
+             TString paveText,
+             TString outputName,
+             bool isAU = false){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
@@ -83,7 +83,7 @@ int plotTH1F(TString th1fName,
   TFile *file = new TFile(inputDirectory);
  
   if(!file->IsOpen()||file==0){
-    std::cout<<"ERROR FILE "<< inputDirectory<<" NOT FOUND; EXITING"<<std::endl;
+    std::cout<<"[ERROR:] FILE "<< inputDirectory<<" NOT FOUND; EXITING"<<std::endl;
     return 0;
   }
  
@@ -93,8 +93,13 @@ int plotTH1F(TString th1fName,
   //gStyle->SetErrorX(0.5);
  
  
-  TH1F* hist = 0;
-  file->GetObject(histPath+th1fName, hist);
+  TH1D* hist = 0;
+  file->GetObject(inputName, hist);
+
+  if (hist == 0) {
+    std::cout << "[ERROR: ] Histogram " << inputName << " not found! Exiting..." << std::endl;
+    return 0;
+  }
 
   hist->SetMarkerColor(0);
   hist->SetFillStyle(1001);
@@ -110,7 +115,7 @@ int plotTH1F(TString th1fName,
     hist->GetYaxis()->SetTitle("A.U.");
   }
   else {
-    hist->GetYaxis()->SetTitle("Counts");
+    hist->GetYaxis()->SetTitle("Yield");
   }
   hist->GetYaxis()->SetTitleSize(0.05);
   
@@ -137,8 +142,7 @@ int plotTH1F(TString th1fName,
  
   //  Save the plot
   Tcan->cd();
-  Tcan->SaveAs(outputDirectory+th1fName+".png");
-  Tcan->SaveAs(outputDirectory+th1fName+".pdf");
+  Tcan->SaveAs(outputName);
  
   delete Tcan;
 
