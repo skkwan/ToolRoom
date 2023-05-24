@@ -41,7 +41,7 @@ void applyLegStyle(TLegend *leg){
   leg->SetFillColor(0);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->SetTextSize(0.06);
+  leg->SetTextSize(0.03);
   leg->SetTextFont(42);
   leg->SetHeader("");
   leg->SetShadowColor(0);
@@ -53,32 +53,28 @@ void applyLegStyle(TLegend *leg){
    number of bins and ranges from integers low to high.
    "legend" is the legend label, "xLabel" is the x-axis label. */
 int singleDistributionPlots(TString variable, TString cut, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
-			    TString xLabel, int bins, int low, int high){ 
+			    TString xLabel, int bins, int low, int high, TString plotname = ""){ 
  
-  //gROOT->LoadMacro("CMS_lumi.C");
-  //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
   setTDRStyle();
  
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
   Tcan->cd();     /* Set current canvas */
   Tcan->SetFillColor(0);
-  //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
-  //applyPadStyle(pad1);
  
   TLegend *leg = new TLegend(0.20,0.85,0.9,0.95);
   applyLegStyle(leg);
  
+  TLatex *latex = new TLatex(); 
+  latex->SetNDC();
+  latex->SetTextFont(42);
+  latex->SetTextColor(kBlack);
+
   TFile *file = new TFile(inputDirectory);
  
   if(!file->IsOpen()||file==0){
     std::cout<<"ERROR FILE "<< inputDirectory <<" NOT FOUND; EXITING"<<std::endl;
     return 0;
   }
- 
-  //gStyle->SetOptFit(0);
-  //gStyle->SetOptStat(0);
-  //gStyle->SetEndErrorSize(0);
-  //gStyle->SetErrorX(0.5);
  
   TTree* tree = (TTree*)file->Get(treePath);
   if(tree == 0){
@@ -95,48 +91,29 @@ int singleDistributionPlots(TString variable, TString cut, TString legend, TStri
   hist->SetLineWidth(1);
   hist->SetLineColor(kBlue+2);
 
-  hist->Scale(1/hist->Integral());
-  //  Tcan->SetLogy();
+  // hist->Scale(1/hist->Integral());
+  // Tcan->SetLogy();
 
   hist->Draw("HIST"); 
   
   hist->GetXaxis()->SetTitle(xLabel);
-  hist->GetYaxis()->SetTitle("A.U.");
+  hist->GetYaxis()->SetTitle("Count (not normalized)");
 
-  /*
-  float max = 10;
-  if(Fake->GetXaxis()->GetBinCenter( Fake->GetMaximumBin() ) > hist->GetXaxis()->GetBinCenter( hist->GetMaximumBin() ) )
-    max = Fake->GetXaxis()->GetBinCenter(Fake->GetMaximumBin());
-  else
-    max = hist->GetXaxis()->GetBinCenter(hist->GetMaximumBin());
-   
-    std::cout<<"max: "<<max<<std::endl;
-  Fake->SetMaximum(max/60);
-  */
+  // leg->AddEntry(hist, legend,"l");
+  // leg->Draw();
 
-  //leg->AddEntry(NoIso,"No Isolation","l");
-  //  leg->AddEntry(hist,"#tau_{h} Gen-Vis p_{T}>20 GeV","l");
-  //  leg->AddEntry(Fake,"Fake Background","l");
-  leg->AddEntry(hist, legend,"l");
-  leg->Draw();
+  latex->DrawLatex(0.16, 0.960, "#scale[0.6]{" + legend + "}"); 
  
   Tcan->cd();
 
-  //TPad* pad2 = new TPad("pad2","The lower pad",0,0,0.98,0.25);
-  //applyPadStyle(pad2);
-  //pad2->cd();
-  //pad2->SetGrid(0,0); 
- 
-  //ratio->Draw("p");
-
- 
-  Tcan->cd();
-
-  Tcan->SaveAs(outputDirectory+variable+".png");
-  Tcan->SaveAs(outputDirectory+variable+".pdf");
+  if (plotname == "") {
+    Tcan->SaveAs(outputDirectory+variable+".pdf");
+  }
+  else {
+    Tcan->SaveAs(outputDirectory+plotname+".pdf");
+  }
  
   delete Tcan;
-
   return 1;
 
 }
