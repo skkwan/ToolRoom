@@ -76,8 +76,8 @@ int runPlotTH1Fs()
     // Label
     TString axisLabel = "m_{vis}";
 
-    // Label text added to plot
-    TString additionalLabel = TString::Format("%s %s", label.c_str(), cat.c_str());
+    // Path to histogram in the file
+    TString inputName = TString::Format("%s/%s_m_vis", ch.c_str(), sampleName.c_str());
 
     // Path to output .pdf file
     TString outputName  = TString::Format("%s/%s_%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str(), cat.c_str());
@@ -87,8 +87,6 @@ int runPlotTH1Fs()
       outputName = TString::Format("%s/%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str());
     }
 
-    std::cout << outputName << std::endl;
-    plotTH1D(inputDirectory, inputName, axisLabel, additionalLabel, outputName);
   }
   return 1; 
 
