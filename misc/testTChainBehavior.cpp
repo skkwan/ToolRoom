@@ -1,5 +1,10 @@
+// Usage:
+// root -l -b -q testTChainBehavior.cpp
 
-
+/*
+ * Load example files into a TChain and check if any of them match a file name which we need to catch.
+ * Prints a message if found.
+ */
 int testTChainBehavior(void) {
 
     TChain *ch = new TChain("Events");
