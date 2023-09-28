@@ -38,21 +38,23 @@ void runDistributionPlots(void)
     std::cout << sampleName << " " << legend << " " << inDir << std::endl;
     TString treePath = "event_tree";
 
-    TString outputBaseDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/cascade_4b2tau_investigation/2023-09-25-15h48m_asymmetricSamples/" + sampleName + "/"; 
+    TString outputBaseDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/cascade_4b2tau_investigation/2023-09-25-15h48m_asymmetricSamples/"; 
     gSystem->Exec("mkdir -p " + outputBaseDirectory);
 
     std::map<std::string, std::string> dictCut = {
-      {"mutau", "(b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (b_flav_idx_3 != -1) && (passMuTauTrigger && channel==0)"}, 
-      {"etau", "(b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (b_flav_idx_3 != -1) && (passETauTrigger && channel==1)"},
-      {"emu", " (b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (b_flav_idx_3 != -1) && (passEMuTrigger && channel==2) "},
-      {"all", "(b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (b_flav_idx_3 != -1) && ((passMuTauTrigger && channel==0) || (passETauTrigger && channel==1) || (passEMuTrigger && channel==2))"}
+      {"mutau", "(b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (passMuTauTrigger && channel==0)"}, 
+      {"etau", "(b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (passETauTrigger && channel==1)"},
+      {"emu", " (b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && (passEMuTrigger && channel==2) "},
+      {"allgeq2btag", "(b_flav_idx_1 != -1) && (b_flav_idx_2 != -1) && ((passMuTauTrigger && channel==0) || (passETauTrigger && channel==1) || (passEMuTrigger && channel==2))"},
+      {"allexactly1btag", "(b_flav_idx_1 != -1) && (b_flav_idx_2 == -1) && ((passMuTauTrigger && channel==0) || (passETauTrigger && channel==1) || (passEMuTrigger && channel==2))"}
     };
 
     std::map<std::string, TString> dictLegends = {
       {"mutau", "#mu#tau_{h} channel"},
       {"etau", "e#tau_{h} channel"},
       {"emu", "e#mu channel"},
-      {"all", "all channels"}
+      {"allgeq2btag", "all channels, #geq 2 b-tag jets"},
+      {"allexactly1btag", "all channels, exactly 1 b-tag jet"}
     };
 
     std::map<std::string, TString> dictLeg1 = {
@@ -67,19 +69,19 @@ void runDistributionPlots(void)
       {"emu", "Muon"}
     };
 
-    std::vector<std::string> channelsToPlot = {"all"};
+    std::vector<std::string> channelsToPlot = {"allgeq2btag", "allexactly1btag"};
 
-    int nBins = 50;
-    int normOption = 1;  // do not normalize 
+    int nBins = 30;
+    bool normOption = false;  
 
     for (std::string channel : channelsToPlot) {
 
       TString ch(channel);
-      //TString outDir = outputBaseDirectory + ch + "/";
-      TString outDir = outputBaseDirectory + "/";
+      TString outDir = outputBaseDirectory;
       gSystem->Exec("mkdir -p " + outDir);
 
-      singleDistributionPlots("m_vis", dictCut[channel], legend + ", " + dictLegends[channel], treePath, inDir, outDir, "m_{#tau#tau}^{vis}", nBins, 0, 200, normOption);
+      TString description = "_" + sampleName + "_" + dictLegends[channel];
+      singleDistributionPlots("m_vis", dictCut[channel], legend + ", " + dictLegends[channel], treePath, inDir, outDir, "m_{#tau#tau}^{vis}", nBins, 0, 200, normOption, description);
 
     }
   }
