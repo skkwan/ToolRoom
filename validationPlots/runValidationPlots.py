@@ -6,12 +6,16 @@ import argparse
 import os
 
 if __name__ == "__main__":
-    output_file_name = "Cascade_VBFH125ToA1A2To3A1_A1ToBBorTauTau_MA2-100_MA1-15"
-    legend = "Cascade VBF a_{3} #rightarrow a_{1} a_{2} #rightarrow 3a_{1} (m_{a2} = 100 GeV), m_{a1} = 15 GeV)"
-    path = "/afs/cern.ch/work/s/skkwan/public/hToA1A2/CMSSW_13_1_0_pre4/src/lunaFramework/syncNanoAOD/"
-    input_root_file = "Cascade_VBFH125ToA1A2To3A1_A1ToBBorTauTau_MA2-100_MA1-15GenSkim.root"
+    samples = [ 
+        "Cascade_VBF_MA2-40_MA1-15"
+    ]
 
-    command = "root -l -b -q 'validationPlots.cpp(\"{}\", \"{}\", \"{}\")'".format(output_file_name, legend, path + input_root_file) 
+    for sample in samples:
+        legend = sample
+        path = "/eos/user/s/skkwan/hToAA/condorSkim/2023-09-28-15h50m"
+        input_root_file = "{}/{}/{}_0.root".format(path, sample, sample)
 
-    print(command)
-    os.system(command)
+        command = "root -l -b -q 'validationPlots.cpp(\"{}\", \"{}\", \"{}\")'".format(sample, legend, input_root_file) 
+
+        print(command)
+        os.system(command)
