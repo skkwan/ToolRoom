@@ -42,20 +42,20 @@ int runPlotTH1Fs()
     }
     
     // Path to histogram in the file
-    TString inputName = TString::Format("%s%s_m_sv", folder.c_str(), sampleName.c_str());
+    TString inputName = TString::Format("%s%s_m_vis", folder.c_str(), sampleName.c_str());
 
     // Label
-    TString axisLabel = "m_{sv}";
+    TString axisLabel = "m_{vis}";
 
     // Label text added to plot
     TString additionalLabel = TString::Format("%s %s", label.c_str(), cat.c_str());
 
     // Path to output .pdf file
-    TString outputName  = TString::Format("%s/%s_%s_m_sv.pdf", outputDirectory.c_str(), sampleName.c_str(), cat.c_str());
+    TString outputName  = TString::Format("%s/%s_%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str(), cat.c_str());
 
     // Nominal
     if (cat == "") {
-      outputName = TString::Format("%s/%s_m_sv.pdf", outputDirectory.c_str(), sampleName.c_str());
+      outputName = TString::Format("%s/%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str());
     }
 
     std::cout << outputName << std::endl;
