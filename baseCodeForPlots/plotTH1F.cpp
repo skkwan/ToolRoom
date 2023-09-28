@@ -61,7 +61,6 @@ void applyLegStyle(TLegend *leg){
 int plotTH1F(TString th1fName, 
              TString xLabel, TString paveText,
              bool isAU,
-             TString histPath, 
 			       TString inputDirectory,
              TString outputDirectory,
              bool useLogy){ 
@@ -98,10 +97,10 @@ int plotTH1F(TString th1fName,
  
  
   TH1D* hist = 0;
-  file->GetObject(inputName, hist);
+  file->GetObject(th1fName, hist);
 
   if (hist == 0) {
-    std::cout << "[ERROR: ] Histogram " << inputName << " not found! Exiting..." << std::endl;
+    std::cout << "[ERROR: ] Histogram " << th1fName << " not found! Exiting..." << std::endl;
     return 0;
   }
 
@@ -146,7 +145,7 @@ int plotTH1F(TString th1fName,
  
   //  Save the plot
   Tcan->cd();
-  Tcan->SaveAs(outputName);
+  Tcan->SaveAs(outputDirectory);
  
   delete Tcan;
 
