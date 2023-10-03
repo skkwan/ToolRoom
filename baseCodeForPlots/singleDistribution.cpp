@@ -41,7 +41,7 @@ void applyLegStyle(TLegend *leg){
   leg->SetFillColor(0);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->SetTextSize(0.03);
+  leg->SetTextSize(0.05);
   leg->SetTextFont(42);
   leg->SetHeader("");
   leg->SetShadowColor(0);
@@ -51,11 +51,9 @@ void applyLegStyle(TLegend *leg){
    treePath specifies the tree in the ROOT file to use.
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "variable". The histogram has (bins)
    number of bins and ranges from integers low to high.
-   "legend" is the legend label, "xLabel" is the x-axis label.
-   normalizeOption: if true, scale to area under the curve.
-    */
-int singleDistributionPlots(TString variable, TString cut, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
-			    TString xLabel, int bins, int low, int high, bool normalize, TString description = ""){ 
+   "legend" is the legend label, "xLabel" is the x-axis label. */
+int singleDistributionPlots(TString variable, TString cut, TString title, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
+			    TString xLabel, int bins, int low, int high, TString plotname = ""){ 
  
   setTDRStyle();
  
@@ -93,20 +91,26 @@ int singleDistributionPlots(TString variable, TString cut, TString legend, TStri
   hist->SetLineWidth(1);
   hist->SetLineColor(kBlue+2);
 
-  if (normalize) {
-    hist->Scale(1/hist->Integral());
-  }
-  //  Tcan->SetLogy();
+  // hist->Scale(1/hist->Integral());
+  // Tcan->SetLogy();
 
   hist->Draw("HIST"); 
   
   hist->GetXaxis()->SetTitle(xLabel);
+  hist->GetYaxis()->SetTitle("Count");
 
-  if (normalize) {
-    hist->GetYaxis()->SetTitle("A.U.");
+  leg->AddEntry(hist, legend + ": " + yield + " events","l");
+  leg->Draw();
+
+  latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + title + "}"); 
+ 
+  Tcan->cd();
+
+  if (plotname == "") {
+    Tcan->SaveAs(outputDirectory+variable+".pdf");
   }
   else {
-    hist->GetYaxis()->SetTitle("Events");
+    Tcan->SaveAs(outputDirectory+plotname+".pdf");
   }
 
   leg->AddEntry(hist, legend + ": " + yield + " events","l");
