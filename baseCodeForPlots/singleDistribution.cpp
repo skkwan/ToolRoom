@@ -41,7 +41,7 @@ void applyLegStyle(TLegend *leg){
   leg->SetFillColor(0);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->SetTextSize(0.03);
+  leg->SetTextSize(0.04);
   leg->SetTextFont(42);
   leg->SetHeader("");
   leg->SetShadowColor(0);
@@ -83,7 +83,7 @@ int singleDistributionPlots(TString variable, TString cut, TString legend, TStri
   }
  
   TH1F *hist = new TH1F("hist","hist", bins,low,high);
-  tree->Draw(variable+">>+hist", cut);
+  int yield = tree->Draw(variable+">>+hist", cut);
 
   hist->SetMarkerColor(0);
   hist->SetFillStyle(1001);
@@ -97,12 +97,12 @@ int singleDistributionPlots(TString variable, TString cut, TString legend, TStri
   hist->Draw("HIST"); 
   
   hist->GetXaxis()->SetTitle(xLabel);
-  hist->GetYaxis()->SetTitle("Count (not normalized)");
+  hist->GetYaxis()->SetTitle("Count");
 
-  // leg->AddEntry(hist, legend,"l");
-  // leg->Draw();
+  leg->AddEntry(hist, legend + ": " + yield + " events","l");
+  leg->Draw();
 
-  latex->DrawLatex(0.16, 0.960, "#scale[0.6]{" + legend + "}"); 
+  latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + legend + "}"); 
  
   Tcan->cd();
 
