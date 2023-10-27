@@ -69,10 +69,9 @@ void runCenterUpDownPlotsFromTTree()
     gSystem->Exec("mkdir -p " + outputDirectory);
 
     // Muon Energy Scale
-    std::vector<std::string> vSystematicsMES_ = {"muonES"};
-      // {"CMS_muES_eta0to1p2", "CMS_muES_eta1p2to2p1", "CMS_muES_eta2p1to2p4"};
+    std::vector<std::string> vSystematicsMES_ = {"CMS_muES_eta0to1p2", "CMS_muES_eta1p2to2p1", "CMS_muES_eta2p1to2p4"};
     
-    std::vector<std::string> vVariablesMES_   = {"m_sv"};
+    std::vector<std::string> vVariablesMES_   = {"m_vis", "met"};
       // {"pt_1", "mtMET_1", "m_vis"};
     makeShiftedPlotsFromBranches(process, vSystematicsMES_, vVariablesMES_, "2018", treePath, inputDirectory, outputDirectory);
 
