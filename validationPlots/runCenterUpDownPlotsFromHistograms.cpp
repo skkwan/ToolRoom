@@ -88,7 +88,7 @@ void runCenterUpDownPlotsFromHistograms()
     makeShiftedPlots(process, {"CMS_tauideff_VSmu_eta0to0p4", "CMS_tauideff_VSmu_eta0p4to0p8", "CMS_tauideff_VSmu_eta0p8to1p2", "CMS_tauideff_VSmu_eta1p2to1p7", "CMS_tauideff_VSmu_eta1p7to2p3"},
                               {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);  
     makeShiftedPlots(process, {"CMS_btagsf_hf", "CMS_btagsf_lf", "CMS_btagsf_hfstats1", "CMS_btagsf_hfstats2", "CMS_btagsf_lfstats1", "CMS_btagsf_lfstats2", "CMS_btagsf_cferr1", "CMS_btagsf_cferr2"},
-                              {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
+                              {"mutau", "etau", "emu"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
     makeShiftedPlots(process, {"CMS_trgeff_single", "CMS_trgeff_cross"},
                               {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
 
