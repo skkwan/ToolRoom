@@ -51,16 +51,16 @@ void applyLegStyle(TLegend *leg){
    input file. 
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "name". The histogram has (bins)
    number of bins and ranges from integers low to high. */
-int updownShiftsPlots(TString process, TString baseVariable, TString channelFolder, TString systematic, TString inputDirectory, TString outputDirectory){ 
+int updownShiftsPlots(TString process, TString baseVariable, TString channelFolder, TString systematic, TString inputDirectory, TString outputDirectory, TString optional = ""){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
   setTDRStyle();
  
 
-  TString variable = baseVariable;
-  TString varUp    = baseVariable + systematic + "Up";
-  TString varDown  = baseVariable + systematic + "Down";
+  TString variable = baseVariable + optional;
+  TString varUp    = baseVariable + systematic + "Up" + optional;
+  TString varDown  = baseVariable + systematic + "Down" + optional;
 
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
   Tcan->cd();     /* Set current canvas */
@@ -87,16 +87,24 @@ int updownShiftsPlots(TString process, TString baseVariable, TString channelFold
               << channelFolder + "/" + variable << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
   }
+  else {
+    std::cout << "Got " << channelFolder + "/" + variable  << std::endl;
+  }
   if (hUp == 0) {
     std::cout << "[ERROR:] Failed to find histogram called " 
               << channelFolder + "/" + varUp << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
-
+  }
+  else {
+     std::cout << "Got " << channelFolder + "/" + varUp  << std::endl;
   }
   if (hDown == 0) {
     std::cout << "[ERROR:] Failed to find histogram called " 
               << channelFolder + "/" + varDown  << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
+  }
+  else {
+     std::cout << "Got " << channelFolder + "/" + varDown  << std::endl;
   }
   float yieldCenter = hCenter->Integral();
   float yieldUp     = hUp->Integral();
@@ -160,8 +168,9 @@ int updownShiftsPlots(TString process, TString baseVariable, TString channelFold
  
   Tcan->cd();
   //Tcan->SetLogy();
-  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+".pdf");
- 
+  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+optional+".pdf");
+  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+optional+".png");
+
   delete Tcan;
 
   f->Close();
