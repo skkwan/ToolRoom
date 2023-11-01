@@ -13,12 +13,12 @@
  */
 
 void makeShiftedPlots(TString process, std::vector<std::string> systematics, std::vector<std::string> channelsAffected, std::vector<std::string> variables, std::string year,
-                      TString inputDirectory, TString outputDirectory) {
+                      TString inputDirectory, TString outputDirectory, TString optional = "") {
 
   for (std::string sys : systematics) {
     for (std::string var : variables) {
       for (std::string channel : channelsAffected) {
-        updownShiftsPlots(process, var, channel, "_" + sys + "_" + year, inputDirectory, outputDirectory);
+        updownShiftsPlots(process, var, channel, "_" + sys + "_" + year, inputDirectory, outputDirectory, optional);
       }
     }   
   }
@@ -69,16 +69,16 @@ void runCenterUpDownPlotsFromHistograms()
     std::vector<std::string> defaultVars = {"m_vis"};
 
     makeShiftedPlots(process, {"CMS_muES_eta0to1p2", "CMS_muES_eta1p2to2p1", "CMS_muES_eta2p1to2p4"}, 
-                              {"mutau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);
+                               {"mutau", "emu"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);
     makeShiftedPlots(process, {"CMS_eleES_bar", "CMS_eleES_end"}, 
-                              {"etau"},  {"m_vis"}, "2018", inputDirectory, outputDirectory);
+                              {"etau", "emu"},  {"m_vis"}, "2018", inputDirectory, outputDirectory);
     makeShiftedPlots(process, {"CMS_tauES_dm0", "CMS_tauES_dm1", "CMS_tauES_dm10", "CMS_tauES_dm11"},                              
                               {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);
     makeShiftedPlots(process, {"CMS_JER", "CMS_JetAbsolute", "CMS_JetBBEC1", "CMS_JetEC2", "CMS_JetFlavorQCD", "CMS_JetHF", "CMS_JetRelativeBal",
                                "CMS_JetAbsoluteyear", "CMS_JetBBEC1year", "CMS_JetEC2year", "CMS_JetHFyear", "CMS_JetRelativeSample"},
-                              {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);
+                              {"mutau", "etau", "emu"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);
     makeShiftedPlots(process, {"CMS_met_0j_resolution", "CMS_met_1j_resolution", "CMS_met_gt1j_resolution", "CMS_met_0j_response",  "CMS_met_1j_response",  "CMS_met_gt1j_response"},
-                              {"mutau", "etau"}, {"met"}, "2018", inputDirectory, outputDirectory);
+                              {"mutau", "etau", "emu"}, {"met"}, "2018", inputDirectory, outputDirectory);
 
     // weight shifts
     makeShiftedPlots(process, {"CMS_tauideff_pt20to25", "CMS_tauideff_pt25to30", "CMS_tauideff_pt30to35", "CMS_tauideff_pt35to40", "CMS_tauideff_pt40to500", "CMS_tauideff_pt500to1000", "CMS_tauideff_ptgt1000"},
@@ -91,13 +91,15 @@ void runCenterUpDownPlotsFromHistograms()
                               {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
     makeShiftedPlots(process, {"CMS_trgeff_single", "CMS_trgeff_cross"},
                               {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
+
+    // use optional argument to indicate antiIso
+    makeShiftedPlots(process, {"CMS_crosstrg_fakefactor", "CMS_jetFR_pt0to25", "CMS_jetFR_pt25to30", "CMS_jetFR_pt30to35", "CMS_jetFR_pt35to40", "CMS_jetFR_pt40to50", "CMS_jetFR_pt50to60", "CMS_jetFR_ptgt60"},
+                              {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory, "_antiIso");
+
     makeShiftedPlots(process, {"CMS_tauidWP_et"},
                               {"etau"},          {"m_vis"}, "2018", inputDirectory, outputDirectory);
-
-    // weight shifts for anti-iso: to-do
-    // weight_ff
-    // weight_crosstrg_fakefactor
-
+    // note m_vis_ss here
+    makeShiftedPlots(process, {"CMS_SScorrection", "CMS_SSclosure", "sCMS_SSboth2D", "CMS_osss"}, {"emu"}, {"m_vis_ss"}, "2018", inputDirectory, outputDirectory);
 
   }
 
