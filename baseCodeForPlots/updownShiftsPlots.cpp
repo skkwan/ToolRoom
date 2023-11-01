@@ -51,22 +51,17 @@ void applyLegStyle(TLegend *leg){
    input file. 
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "name". The histogram has (bins)
    number of bins and ranges from integers low to high. */
-int updownShiftsPlots(TString process, TString baseVariable, TString systematic, TString inputDirectory, TString outputDirectory){ 
+int updownShiftsPlots(TString process, TString baseVariable, TString channelFolder, TString systematic, TString inputDirectory, TString outputDirectory, TString optional = ""){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
   setTDRStyle();
  
 
-  TString variable = process + "_" + baseVariable;
-  TString varUp    = process + "_" + baseVariable + systematic + "Up";
-  TString varDown  = process + "_" + baseVariable + systematic + "Down";
+  TString variable = baseVariable + optional;
+  TString varUp    = baseVariable + systematic + "Up" + optional;
+  TString varDown  = baseVariable + systematic + "Down" + optional;
 
-  // TString variable = baseVariable;
-  // TString varUp    = baseVariable + systematic + "Up";
-  // TString varDown  = baseVariable + systematic + "Down";
- 
-  //  TFile* tauFile = new TFile("dummy");
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
   Tcan->cd();     /* Set current canvas */
   Tcan->SetFillColor(0);
@@ -76,39 +71,40 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   TLegend *leg = new TLegend(0.50,0.62,0.9,0.92);
   applyLegStyle(leg);
  
-  TFile *file = new TFile(inputDirectory);
+  TFile *f = new TFile(inputDirectory);
  
-  if(!file->IsOpen()||file==0){
-    std::cout<<"[ERROR:] File "<< inputDirectory << " NOT FOUND; EXITING"<<std::endl;
+  if(!f->IsOpen() || f==0){
+    std::cout << "[ERROR:] File "<< inputDirectory << " NOT FOUND; EXITING"<<std::endl;
     return 0;
   }
 
-  TH1D *hCenter = 0;
-  file->GetObject(variable, hCenter);
-
-
-  TH1D *hUp = 0;
-  file->GetObject(varUp, hUp);
-
-  TH1D *hDown = 0;
-  file->GetObject(varDown, hDown);
+  TH1D *hCenter = (TH1D*) f->Get(channelFolder + "/" + variable);
+  TH1D *hUp = (TH1D*) f->Get(channelFolder + "/" + varUp);
+  TH1D *hDown = (TH1D*) f->Get(channelFolder + "/" + varDown);
 
   if (hCenter == 0) {
     std::cout << "[ERROR:] Failed to find histogram called " 
-              << variable << " in the input file, exiting" << std::endl;
+              << channelFolder + "/" + variable << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
+  }
+  else {
+    std::cout << "Got " << channelFolder + "/" + variable  << std::endl;
   }
   if (hUp == 0) {
     std::cout << "[ERROR:] Failed to find histogram called " 
-              << varUp << " in the input file, exiting" << std::endl;
+              << channelFolder + "/" + varUp << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
-
+  }
+  else {
+     std::cout << "Got " << channelFolder + "/" + varUp  << std::endl;
   }
   if (hDown == 0) {
     std::cout << "[ERROR:] Failed to find histogram called " 
-              << varDown << " in the input file, exiting" << std::endl;
+              << channelFolder + "/" + varDown  << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
-
+  }
+  else {
+     std::cout << "Got " << channelFolder + "/" + varDown  << std::endl;
   }
   float yieldCenter = hCenter->Integral();
   float yieldUp     = hUp->Integral();
@@ -151,39 +147,14 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
   // Make more room at the top for the legend
   float max = hUp->GetMaximum(); 
   hUp->SetMaximum(max * 1.45);  
-  /*
-  float max = 10;
-  if(Fake->GetXaxis()->GetBinCenter( Fake->GetMaximumBin() ) > hCenter->GetXaxis()->GetBinCenter( hCenter->GetMaximumBin() ) )
-    max = Fake->GetXaxis()->GetBinCenter(Fake->GetMaximumBin());
-  else
-    max = hCenter->GetXaxis()->GetBinCenter(hCenter->GetMaximumBin());
-   
-    std::cout<<"max: "<<max<<std::endl;
-  Fake->SetMaximum(max/60);
-  */
 
-  //leg->AddEntry(NoIso,"No Isolation","l");
-  //  leg->AddEntry(hCenter,"#tau_{h} Gen-Vis p_{T}>20 GeV","l");
-  //  leg->AddEntry(Fake,"Fake Background","l");
-  leg->SetTextFont(42);
-  leg->SetHeader(process);
-
-  leg->AddEntry(hDown,   TString::Format("Down:   yield: %0.2f", yieldDown),   "l");
-  leg->AddEntry(hCenter, TString::Format("Central: yield: %0.2f", yieldCenter), "l");
+  leg->SetHeader(TString::Format("%s, %s", process.Data(), channelFolder.Data()));
   leg->AddEntry(hUp,     TString::Format("Up:        yield: %0.2f", yieldUp),     "l");
+  leg->AddEntry(hCenter, TString::Format("Central: yield: %0.2f", yieldCenter), "l");
+  leg->AddEntry(hDown,   TString::Format("Down:   yield: %0.2f", yieldDown),   "l");
 
   leg->Draw();
 
-
-  // TLatex *latex = new TLatex(); 
-  // latex->SetNDC();
-  // latex->SetTextFont(42);
-  // latex->SetTextColor(kBlack);
-  // float commentaryXpos = 0.47;
-  // //latex->DrawLatex(0.80, 0.920, "#scale[0.8]{0 PU}");
-  // latex->DrawLatex(commentaryXpos, 0.820, TString::Format("Yield up: %f", yieldUp));
-  // latex->DrawLatex(commentaryXpos, 0.780, TString::Format("Yield center: %f", yieldCenter));
-  // latex->DrawLatex(commentaryXpos, 0.740, TString::Format("Yield down: %f", yieldDown));
   Tcan->Update();
   Tcan->cd();
 
@@ -197,11 +168,12 @@ int updownShiftsPlots(TString process, TString baseVariable, TString systematic,
  
   Tcan->cd();
   //Tcan->SetLogy();
-  Tcan->SaveAs(outputDirectory+baseVariable+systematic+".pdf");
-  // Tcan->SaveAs(outputDirectory+baseVariable+systematic+".png");
- 
+  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+optional+".pdf");
+  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+optional+".png");
+
   delete Tcan;
 
+  f->Close();
   return 1;
 
 }

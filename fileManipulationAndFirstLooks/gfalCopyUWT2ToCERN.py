@@ -40,17 +40,17 @@ args = parser.parse_args()
 # "W4JetsToLNu",
 # "WJetsToLNu"]
 
-# #originFolders=["SUSYGluGluToHToAA_AToBB_AToTauTau_M-45","SUSYVBFHToAA_AToBB_AToTauTau_M-45"]
-originFolders=["DYJetsToLL_M-10to50", "TTTo2L2Nu"]
+#originFolders=["DYJetsToLL_M-10to50", "TTTo2L2Nu"]
+originFolders=["SingleMuon-Run2018A","SingleMuon-Run2018B","SingleMuon-Run2018C","SingleMuon-Run2018D"]
 
 existingDestinationFolders=[]
 
 for originFolder in originFolders:
     if (originFolder not in existingDestinationFolders):
         print(originFolder + " not found at destination")
-        command = "nohup gfal-copy -p -r -t 999999999 /eos/user/s/skkwan/hToAA/condor/Jul-11-2022-14h25m-PreApprovalChecks_test/%s davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018_preapprovalChecks/%s > logRun_%s &" % (originFolder, originFolder, originFolder)
+        # command = "nohup gfal-copy -p -r -t 999999999 /eos/user/s/skkwan/hToAA/condor/Jul-11-2022-14h25m-PreApprovalChecks_test/%s davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018_preapprovalChecks/%s > logRun_%s &" % (originFolder, originFolder, originFolder)
 
-        #command = "nohup gfal-copy -p -r -t 999999999 /eos/user/s/skkwan/hToAA/condor/Jun-23-2022-10h32m-DataMC2018_fixedCrossTrigPath/%s davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018/%s > logRun_%s &" % (originFolder, originFolder, originFolder)  
+        command = "nohup gfal-copy -p -r -t 999999999 davs://cmsxrootd.hep.wisc.edu:1094/store/user/skkwan/haabbtt_mt2018_svfitted/%s /eos/user/s/skkwan/hToAA/svfitted/%s > logRun_%s &" % (originFolder, originFolder, originFolder)
         if (args.execute):
             print(">>> Executing " + command)
             os.system(command)

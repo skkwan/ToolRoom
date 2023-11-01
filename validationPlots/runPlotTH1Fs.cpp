@@ -20,101 +20,52 @@ int runPlotTH1Fs()
     */
  
   //  std::vector<TString> histPaths = {"", "b1_sr1", "b1_sr2", "b1_sr3", "b1_cr", "b2_sr1", "b2_sr2", "b2_cr"};
-  std::vector<std::string> categories = {"", "b1_sr1"};
-  std::string inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/2023-09-21_histograms.root";
-  std::string outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/plots/";
+  std::vector<std::string> categories = {""};
+  std::string inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/out.root";
+  std::string outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/sysplots";
 
 
-  std::vector<std::string> channels = {"mutau", "etau", "emu"};
-  std::vector<std::string> sampleNames = {
-    "TTToSemiLeptonic",
-    "DY1JetsToLL",
-    "DYJetsToLL_M-10to50",
-    "ST_t-channel_top",
-    "ST_t-channel_antitop",
-    "VVTo2L2Nu",
-    "DY4JetsToLL",
-    "W2JetsToLNu",
-    "W3JetsToLNu",
-    "W4JetsToLNu",
-    "GluGluHToTauTau",
-    "WZTo3LNu",
-    "GluGluHToWWTo2L2Nu",
-    "DYJetsToLL_M-50",
-    "DY2JetsToLL",
-    "TTToHadronic",
-    "ZZTo4L",
-    "HWplusJ_HToWW",
-    "HZJ_HToWW",
-    "GluGluZH_HToWW_ZTo2L",
-    "ZHToTauTau",
-    "EGamma-Run2018A",
-    "ttHToNonbb",
-    "ttHTobb",
-    "EGamma-Run2018B",
-    "WZTo2L2Q",
-    "VBFHToWWTo2L2Nu",
-    "MuonEG-Run2018D",
-    "Embedded-Run2018A-MuTau",
-    "VBFHToTauTau",
-    "MuonEG-Run2018C",
-    "Embedded-Run2018B-ElTau",
-    "ZZTo2L2Q",
-    "W1JetsToLNu",
-    "WminusHToTauTau",
-    "WJetsToLNu",
-    "DY3JetsToLL",
-    "ST_tW_antitop",
-    "ST_tW_top",
-    "GluGluZH_HToWWTo2L2Nu",
-    "SingleMuon-Run2018D",
-    "HWminusJ_HToWW",
-    "MuonEG-Run2018B",
-    "SingleMuon-Run2018C",
-    "SingleMuon-Run2018B",
-    "Embedded-Run2018C-ElTau",
-    "WplusHToTauTau",
-    "SingleMuon-Run2018A",
-    "SUSYVBFHToAA_AToBB_AToTauTau_M-45",
-    "EGamma-Run2018C",
-    "Embedded-Run2018A-ElTau",
-    "MuonEG-Run2018A",
-    "Embedded-Run2018C-MuTau",
-    "Embedded-Run2018B-MuTau",
-    "EGamma-Run2018D",
-    "Embedded-Run2018D-MuTau",
-    "SUSYGluGluToHToAA_AToBB_AToTauTau_M-45",
-    "Embedded-Run2018D-ElTau",
-    "TTTo2L2Nu"
-    };
+  std::vector<std::string> sysToPlot = {"muES_eta0to1p2", "muES_eta1p2to2p1", "muES_eta2p1to2p4",
+  "tauES_dm0", "tauES_dm1", "tauES_dm10", "tauES_dm11",
+  "JER", "JetAbsolute", "JetAbsoluteyear", "JetBBEC1", "JetBBEC1year", "JetEC2", "JetEC2year", "JetFlavorQCD", "JetHF", "JetHFyear", "JetRelativeBal", "JetRelativeSample",
+  "met_0j_resolution", "met_1j_resolution", "met_gt1j_resolution", "met_0j_response",  "met_1j_response",  "met_gt1j_response",
+  "tauideff_pt20to25", "tauideff_pt25to30", "tauideff_pt30to35", "tauideff_pt35to40", "tauideff_pt40to500", "tauideff_pt500to1000", "tauideff_ptgt1000",
+  "tauideff_VSe_bar", "tauideff_VSe_end",
+  "tauideff_VSmu_eta0to0p4", "tauideff_VSmu_eta0p4to0p8", "tauideff_VSmu_eta0p8to1p2", "tauideff_VSmu_eta1p2to1p7", "tauideff_VSmu_eta1p7to2p3",
+  "btagsf_hf", "btagsf_lf", "btagsf_hfstats1", "btagsf_hfstats2", "btagsf_lfstats1", "btagsf_lfstats2", "btagsf_cferr1", "btagsf_cferr2",
+  "jetFR_pt0to25", "jetFR_pt25to30", "jetFR_pt30to35", "jetFR_pt35to40", "jetFR_pt40to50", "jetFR_pt50to60", "jetFR_ptgt60",
+  "crosstrg_fakefactor",
+  "trgeff_single", "trgeff_cross"};
 
-  for ( std::string ch : channels ) {
-    for ( std::string sampleName : sampleNames ) {
-      std::cout << sampleName << std::endl;
 
-      // Folder name
-      std::string folder = ch + "/";
 
-      // Path to histogram in the file
-      TString inputName = TString::Format("%s/%s_m_vis", ch.c_str(), sampleName.c_str());
+  for ( std::string var : {"met", "m_vis"}) {
+    for (std::string updown : {"Up", "Down"}) {
+      for ( std::string sys : sysToPlot ) {
 
-      // Label
-      TString axisLabel = "m_{vis} [GeV]";
+        std::cout << sys << std::endl;
 
-      // Label text added to plot
-      TString additionalLabel = TString::Format("%s %s", sampleName.c_str(), ch.c_str());
+        // Folder name
+        std::string folder;
+        
+        // Path to histogram in the file
+        TString inputName = TString::Format("%s_CMS_%s_2018%s", var.c_str(), sys.c_str(), updown.c_str());
+        std::cout << inputName.Data() << std::endl;
+        // Label
+        TString axisLabel = var.c_str();
 
-      // Path to output .pdf file
-      TString outputName  = TString::Format("%s%s_%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str(), ch.c_str());
+        // Label text added to plot
+        TString additionalLabel = TString::Format("%s %s", sys.c_str(), updown.c_str());
 
-      std::cout << outputName << std::endl;
-      bool isAU = false;
-      bool useLogy = false;
-      plotTH1F(inputName, axisLabel, additionalLabel, isAU, inputDirectory, outputName, useLogy);
+        // Path to output .pdf file
+        TString outputName = TString::Format("%s/%s_CMS_%s_2018%s.pdf", outputDirectory.c_str(), var.c_str(), sys.c_str(), updown.c_str());
+        
+
+        std::cout << outputName << std::endl;
+        plotTH1F(inputName, axisLabel, additionalLabel, false, inputDirectory, outputName, false);
+      }
     }
-
   }
-
   return 1; 
 
 }

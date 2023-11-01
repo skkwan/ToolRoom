@@ -41,7 +41,7 @@ void applyLegStyle(TLegend *leg){
   leg->SetFillColor(0);
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
-  leg->SetTextSize(0.05);
+  leg->SetTextSize(0.04);
   leg->SetTextFont(42);
   leg->SetHeader("");
   leg->SetShadowColor(0);
@@ -52,7 +52,7 @@ void applyLegStyle(TLegend *leg){
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "variable". The histogram has (bins)
    number of bins and ranges from integers low to high.
    "legend" is the legend label, "xLabel" is the x-axis label. */
-int singleDistributionPlots(TString variable, TString cut, TString title, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
+int singleDistributionPlots(TString variable, TString cut, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
 			    TString xLabel, int bins, int low, int high, TString plotname = ""){ 
  
   setTDRStyle();
@@ -102,7 +102,7 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
   leg->AddEntry(hist, legend + ": " + yield + " events","l");
   leg->Draw();
 
-  latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + title + "}"); 
+  latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + legend + "}"); 
  
   Tcan->cd();
 
