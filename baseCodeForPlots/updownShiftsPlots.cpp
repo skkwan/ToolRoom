@@ -78,33 +78,33 @@ int updownShiftsPlots(TString process, TString baseVariable, TString channelFold
     return 0;
   }
 
-  TH1D *hCenter = (TH1D*) f->Get(channelFolder + "/" + variable);
-  TH1D *hUp = (TH1D*) f->Get(channelFolder + "/" + varUp);
-  TH1D *hDown = (TH1D*) f->Get(channelFolder + "/" + varDown);
+  TString nameCenter = channelFolder + "/" + process + "_" + variable;
+  TString nameUp     = channelFolder + "/" + process + "_" + varUp;
+  TString nameDown   = channelFolder + "/" + process + "_" + varDown;
+  TH1D *hCenter = (TH1D*) f->Get(nameCenter);
+  TH1D *hUp     = (TH1D*) f->Get(nameUp);
+  TH1D *hDown   = (TH1D*) f->Get(nameDown);
 
   if (hCenter == 0) {
-    std::cout << "[ERROR:] Failed to find histogram called " 
-              << channelFolder + "/" + variable << " in the input file " << inputDirectory << ", exiting" << std::endl;
+    std::cout << "[ERROR:] Failed to find histogram called " << nameCenter << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
   }
   else {
-    std::cout << "Got " << channelFolder + "/" + variable  << std::endl;
+    std::cout << "Got " << nameCenter << std::endl;
   }
   if (hUp == 0) {
-    std::cout << "[ERROR:] Failed to find histogram called " 
-              << channelFolder + "/" + varUp << " in the input file " << inputDirectory << ", exiting" << std::endl;
+    std::cout << "[ERROR:] Failed to find histogram called " << nameUp << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
   }
   else {
-     std::cout << "Got " << channelFolder + "/" + varUp  << std::endl;
+     std::cout << "Got " << nameUp << std::endl;
   }
   if (hDown == 0) {
-    std::cout << "[ERROR:] Failed to find histogram called " 
-              << channelFolder + "/" + varDown  << " in the input file " << inputDirectory << ", exiting" << std::endl;
+    std::cout << "[ERROR:] Failed to find histogram called " << nameDown << " in the input file " << inputDirectory << ", exiting" << std::endl;
     return 0;
   }
   else {
-     std::cout << "Got " << channelFolder + "/" + varDown  << std::endl;
+     std::cout << "Got " << nameDown << std::endl;
   }
   float yieldCenter = hCenter->Integral();
   float yieldUp     = hUp->Integral();
@@ -168,8 +168,8 @@ int updownShiftsPlots(TString process, TString baseVariable, TString channelFold
  
   Tcan->cd();
   //Tcan->SetLogy();
-  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+optional+".pdf");
-  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+baseVariable+systematic+optional+".png");
+  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+process+"_"+baseVariable+systematic+optional+".pdf");
+  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+process+"_"+baseVariable+systematic+optional+".png");
 
   delete Tcan;
 

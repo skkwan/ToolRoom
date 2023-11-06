@@ -54,7 +54,7 @@ void runCenterUpDownPlotsFromHistograms()
   //                                        "SUSYVBFToHToAA_AToBB_AToTauTau_M-45", "SUSYGluGluToHToAA_AToBB_AToTauTau_M-45"};
 
 
-  std::vector<std::string> vProcesses = {"VBFHToTauTau"};
+  std::vector<std::string> vProcesses = {"VBFHToTauTau", "TTToSemiLeptonic"};
 
   for (unsigned int i = 0; i < vProcesses.size(); i++) {
   
@@ -62,7 +62,7 @@ void runCenterUpDownPlotsFromHistograms()
 
     TString treePath = "mutau_tree";
     TString inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/out.root";
-    TString outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/sysPlots/";
+    TString outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G6/hToA1A2/temp/sysPlots";
 
     gSystem->Exec("mkdir -p " + outputDirectory);
 
@@ -91,6 +91,9 @@ void runCenterUpDownPlotsFromHistograms()
                               {"mutau", "etau", "emu"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
     makeShiftedPlots(process, {"CMS_trgeff_single", "CMS_trgeff_cross"},
                               {"mutau", "etau"}, {"m_vis"}, "2018", inputDirectory, outputDirectory); 
+
+    makeShiftedPlots(process, {"CMS_trgeff_Mu8E23_em", "CMS_trgeff_Mu23E12_em", "CMS_trgeff_both_em"},
+                              {"emu"}, {"m_vis"}, "2018", inputDirectory, outputDirectory);
 
     // use optional argument to indicate antiIso
     makeShiftedPlots(process, {"CMS_crosstrg_fakefactor", "CMS_jetFR_pt0to25", "CMS_jetFR_pt25to30", "CMS_jetFR_pt30to35", "CMS_jetFR_pt35to40", "CMS_jetFR_pt40to50", "CMS_jetFR_pt50to60", "CMS_jetFR_ptgt60"},
