@@ -80,7 +80,8 @@ int plotTH1F(TString th1fName,
 
   if (useLogy) gPad->SetLogy();
  
-  TLegend *leg = new TLegend(0.60,0.75,0.85,0.9);
+  // TLegend *leg = new TLegend(0.60,0.75,0.85,0.9);
+  TLegend *leg = new TLegend(0.1,0.75,0.4,0.9);
   applyLegStyle(leg);
  
   TFile *file = new TFile(inputDirectory);
@@ -96,7 +97,7 @@ int plotTH1F(TString th1fName,
   //gStyle->SetErrorX(0.5);
  
  
-  TH1D* hist = 0;
+  TH1F* hist;
   file->GetObject(th1fName, hist);
 
   if (hist == 0) {
@@ -104,11 +105,11 @@ int plotTH1F(TString th1fName,
     return 0;
   }
 
-  hist->SetMarkerColor(0);
-  // hist->SetFillStyle(1001);
-  //  hist->SetFillColorAlpha(kBlue+2, 0.1);
-  hist->SetLineWidth(1);
-  hist->SetLineColor(kBlue+2);
+  // hist->SetMarkerColor(0);
+  // // hist->SetFillStyle(1001);
+  // //  hist->SetFillColorAlpha(kBlue+2, 0.1);
+  // hist->SetLineWidth(1);
+  // hist->SetLineColor(kBlue+2);
 
   ///// DRAWING
 
@@ -118,7 +119,7 @@ int plotTH1F(TString th1fName,
     hist->GetYaxis()->SetTitle("A.U.");
   }
   else {
-    hist->GetYaxis()->SetTitle("Yield");
+    hist->GetYaxis()->SetTitle("Scale factor");
   }
   hist->GetYaxis()->SetTitleSize(0.05);
   
@@ -127,9 +128,9 @@ int plotTH1F(TString th1fName,
   hist->GetXaxis()->SetTitle(xLabel);
   hist->GetXaxis()->SetTitleSize(0.05);
 
-
+  hist->SetBinError()
   
-  hist->Draw("HIST"); 
+  hist->Draw("E1"); 
 
   // Legend
   // leg->AddEntry(hist, legLabel, "l");
@@ -137,7 +138,7 @@ int plotTH1F(TString th1fName,
 
   // Draw the TPaveText
   Tcan->cd();
-  TPaveText *pt = new TPaveText(0.6, 0.85, 0.96, 0.90, "NDCNB"); 
+  TPaveText *pt = new TPaveText(0.2, 0.2, 0.6, 0.5, "NDCNB"); 
   pt->SetFillColor(kWhite);
   pt->AddText(paveText);
   pt->SetTextColor(kBlack);
