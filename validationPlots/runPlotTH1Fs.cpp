@@ -65,6 +65,28 @@ int runPlotTH1Fs()
         plotTH1F(inputName, axisLabel, additionalLabel, false, inputDirectory, outputName, false);
       }
     }
+    else {
+      // Category
+      folder = cat + "/";
+    }
+    
+    // Path to histogram in the file
+    TString inputName = TString::Format("%s%s_m_vis", folder.c_str(), sampleName.c_str());
+
+    // Label
+    TString axisLabel = "m_{vis}";
+
+    // Path to histogram in the file
+    TString inputName = TString::Format("%s/%s_m_vis", ch.c_str(), sampleName.c_str());
+
+    // Path to output .pdf file
+    TString outputName  = TString::Format("%s/%s_%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str(), cat.c_str());
+
+    // Nominal
+    if (cat == "") {
+      outputName = TString::Format("%s/%s_m_vis.pdf", outputDirectory.c_str(), sampleName.c_str());
+    }
+
   }
   return 1; 
 
