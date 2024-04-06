@@ -91,6 +91,10 @@ int singleDistributionPlots(TString variable, TString cut, TString legend, TStri
   hist->SetLineWidth(1);
   hist->SetLineColor(kBlue+2);
 
+  // Make more room at the top for the legend
+  float max = hist->GetMaximum(); 
+  hist->SetMaximum(max * 1.2);  
+
   // hist->Scale(1/hist->Integral());
   // Tcan->SetLogy();
 
@@ -108,9 +112,13 @@ int singleDistributionPlots(TString variable, TString cut, TString legend, TStri
 
   if (plotname == "") {
     Tcan->SaveAs(outputDirectory+variable+".pdf");
+    Tcan->SaveAs(outputDirectory+variable+".png");
+    Tcan->SaveAs(outputDirectory+variable+".cpp");
   }
   else {
     Tcan->SaveAs(outputDirectory+plotname+".pdf");
+    Tcan->SaveAs(outputDirectory+plotname+".png");
+    Tcan->SaveAs(outputDirectory+plotname+".cpp");
   }
  
   delete Tcan;
