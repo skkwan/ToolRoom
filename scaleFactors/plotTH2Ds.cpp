@@ -1,8 +1,8 @@
 
 int plotTH2Ds(void) {
 
-
-    TString thisHLTPath = "Mu8Ele23";
+    TString thisHLTPath = "HLTMu8Ele23";
+    // TString thisHLTPath = "HLTMu23Ele12";
     TString path = "out_HLT_" + thisHLTPath + ".root";
 
     TFile *newFile = new TFile(path);

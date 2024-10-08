@@ -68,49 +68,50 @@ void drawAndSaveTH2D(TH2D* h2, TString title, TString xLabel, TString yLabel, TS
     delete c1;
 }
 
-/* 
- *
- */
 
-float getSF_E12(RooWorkspace *wmc, float ele_pt, float ele_eta) {
+float getSF_electron_HLT(RooWorkspace *wmc, float ele_pt, float ele_eta, TString hltPath) {
 
+    TString data;
+    TString mc;
 
-    wmc->var("e_pt")->setVal(ele_pt);
-    wmc->var("e_eta")->setVal(ele_eta);
-    float sf_e_trg_12_ic_data = wmc->function("e_trg_12_ic_data")->getVal();
-    float sf_e_trg_12_ic_mc = wmc->function("e_trg_12_ic_mc")->getVal();
-
-    // FIXME: 
-    // float trgsf_Mu23E12only_num = sf_m_trg_23_ic_data * sf_e_trg_12_ic_data; 
-    // float trgsf_Mu23E12only_den = sf_m_trg_23_ic_mc * sf_e_trg_12_ic_mc;
-
-    // float trgsf = (trgsf_Mu23E12only_num / trgsf_Mu23E12only_den);
-
-    // return trgsf;
-    return (sf_e_trg_12_ic_data/sf_e_trg_12_ic_mc);
-}
-
-
-float getSF_electron_HLT_Mu8Ele23(RooWorkspace *wmc, float ele_pt, float ele_eta) {
-
+    if (hltPath == "HLTMu8Ele23") {
+        data = "e_trg_23_ic_data";
+        mc = "e_trg_23_ic_mc";
+    }
+    else if (hltPath == "HLTMu23Ele12") {
+        data = "e_trg_12_ic_data";
+        mc = "e_trg_12_ic_mc";
+    }
 
     wmc->var("e_pt")->setVal(ele_pt);
     wmc->var("e_eta")->setVal(ele_eta);
-    float sf_data = wmc->function("e_trg_23_ic_data")->getVal();
-    float sf_mc = wmc->function("e_trg_23_ic_mc")->getVal();
+    float sf_data = wmc->function(data)->getVal();
+    float sf_mc = wmc->function(mc)->getVal();
 
     // return trgsf;
     return (sf_data/sf_mc);
 }
 
 
-float getSF_muon_HLT_Mu8Ele23(RooWorkspace *wmc, float mu_pt, float mu_eta) {
+float getSF_muon_HLT(RooWorkspace *wmc, float mu_pt, float mu_eta, TString hltPath) {
 
 
+    TString data;
+    TString mc;
+
+
+    if (hltPath == "HLTMu8Ele23") {
+        data = "m_trg_8_ic_data";
+        mc = "m_trg_8_ic_mc";
+    }
+    else if (hltPath == "HLTMu23Ele12") {
+        data = "m_trg_23_ic_data";
+        mc = "m_trg_23_ic_mc";
+    }
     wmc->var("m_pt")->setVal(mu_pt);
     wmc->var("m_eta")->setVal(mu_eta);
-    float sf_data = wmc->function("m_trg_23_ic_data")->getVal();
-    float sf_mc = wmc->function("m_trg_23_ic_mc")->getVal();
+    float sf_data = wmc->function(data)->getVal();
+    float sf_mc = wmc->function(mc)->getVal();
 
     // return trgsf;
     return (sf_data/sf_mc);
@@ -125,8 +126,10 @@ float getSF_muon_HLT_Mu8Ele23(RooWorkspace *wmc, float mu_pt, float mu_eta) {
 
 int getTH2DFromRooWorkSpace(void) {
 
-    TString pathToNewHisto_electron = "/eos/user/s/skkwan/www/sfFromAshling/sf_el_2018_HLTMu8Ele23.root";
-    TString pathToNewHisto_muon = "/eos/user/s/skkwan/www/sfFromAshling/sf_mu_2018_HLTMu8Ele23.root";
+    // TString hltPath = "HLTMu8Ele23";
+    TString hltPath = "HLTMu23Ele12";
+    TString pathToNewHisto_electron = "/eos/user/s/skkwan/www/sfFromAshling/sf_el_2018_" + hltPath + ".root";
+    TString pathToNewHisto_muon = "/eos/user/s/skkwan/www/sfFromAshling/sf_mu_2018_" + hltPath + ".root";
 
     TFile *newFile_electron = new TFile(pathToNewHisto_electron);
     if (!newFile_electron->IsOpen() || newFile_electron==0 ) {
@@ -168,7 +171,7 @@ int getTH2DFromRooWorkSpace(void) {
             float ele_eta = newSF_electron->GetYaxis()->GetBinCenter(j);
 
             // Evaluate the RooWorkSpace at this point
-            float newValue = getSF_electron_HLT_Mu8Ele23(wmc, ele_pt, ele_eta);
+            float newValue = getSF_electron_HLT(wmc, ele_pt, ele_eta, hltPath);
             if (newValue > 2.0) {
                 newValue = 2.0;
             }
@@ -186,7 +189,7 @@ int getTH2DFromRooWorkSpace(void) {
             float mu_eta = newSF_muon->GetYaxis()->GetBinCenter(j);
 
             // Evaluate the RooWorkSpace at this point
-            float newValue = getSF_muon_HLT_Mu8Ele23(wmc, mu_pt, mu_eta);
+            float newValue = getSF_muon_HLT(wmc, mu_pt, mu_eta, hltPath);
             if (newValue > 2.0) {
                 newValue = 2.0;
             }
@@ -199,13 +202,13 @@ int getTH2DFromRooWorkSpace(void) {
 
 
 
-    TFile fOldSF_electron("out_HLT_Mu8Ele23.root", "RECREATE");
-    fOldSF_electron.cd();
+    TFile fOut("out_HLT_" + hltPath + ".root", "RECREATE");
+    fOut.cd();
     oldSF_electron->Write();
     oldSF_muon->Write();
     newSF_electron->Write();
     newSF_muon->Write();
-    fOldSF_electron.Close();
+    fOut.Close();
 
     newFile_electron->Close();
     newFile_muon->Close();
