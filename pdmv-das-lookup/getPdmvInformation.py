@@ -24,8 +24,8 @@ mcm = McM(id=McM.OIDC, dev=True, debug=False)
 # https://its.cern.ch/jira/browse/HIGHPRIOREQ-760 
 
 # 2018 Cascade
-#    SUS-RunIISummer20UL17wmLHEGEN-00992 -> SUS-RunIISummer20UL17wmLHEGEN-01003
-#    SUS-RunIISummer20UL17wmLHEGEN-00847 -> SUS-RunIISummer20UL17wmLHEGEN-00859
+    # SUS-RunIISummer20UL18wmLHEGEN-00934 -> SUS-RunIISummer20UL18wmLHEGEN-00953
+    # SUS-RunIISummer20UL18wmLHEGEN-01071 -> SUS-RunIISummer20UL18wmLHEGEN-01090
 
 # 2018 Non-Cascade
     # SUS-RunIISummer20UL18wmLHEGEN-00913 -> SUS-RunIISummer20UL18wmLHEGEN-00925
@@ -59,8 +59,13 @@ mcm = McM(id=McM.OIDC, dev=True, debug=False)
 # SUS-RunIISummer20UL16wmLHEGEN-01099 -> SUS-RunIISummer20UL16wmLHEGEN-01111
 
 requests_query = """
-    SUS-RunIISummer20UL16wmLHEGEN-00943 -> SUS-RunIISummer20UL16wmLHEGEN-00955
-    SUS-RunIISummer20UL16wmLHEGEN-01099 -> SUS-RunIISummer20UL16wmLHEGEN-01111
+    SUS-RunIISummer20UL17wmLHEGEN-00900
+    SUS-RunIISummer20UL17wmLHEGEN-01004 -> SUS-RunIISummer20UL17wmLHEGEN-01018
+    SUS-RunIISummer20UL17wmLHEGEN-01020 -> SUS-RunIISummer20UL17wmLHEGEN-01023
+    SUS-RunIISummer20UL17wmLHEGEN-00864 -> SUS-RunIISummer20UL17wmLHEGEN-00883
+    SUS-RunIISummer20UL17wmLHEGEN-00847  SUS-RunIISummer20UL17wmLHEGEN-00859
+    SUS-RunIISummer20UL17wmLHEGEN-00901  
+    SUS-RunIISummer20UL17wmLHEGEN-00992  SUS-RunIISummer20UL17wmLHEGEN-01003
 """
 
 range_of_requests = mcm.get_range_of_requests(requests_query)
@@ -94,11 +99,12 @@ for request in range_of_requests:
             for d2 in d1["dataset"]:
                 if "nevents" in d2.keys():
                     nevents = d2["nevents"]
+                    nEventsAsMillion = nevents/1000000
 
     with open("report.txt", "a") as report:
         dataset_name_abbrev = dataset_name[:dataset_name.find('_TuneCP5')]
         dataset_name_abbrev = dataset_name_abbrev.replace(" ", "_")
-        report.write(f'{dataset_name_abbrev}  & {nevents:,} & {filter_efficiency:.6f} \\\\ \n')
+        report.write(f'{dataset_name_abbrev}  & {nEventsAsMillion:.2f}M & {filter_efficiency:.6f} \\\\ \n')
 
     with open("pythonConfig.py", "a") as report:
         report.write(f'"{dataset_name_abbrev}": {filter_efficiency:.6f},\n')
