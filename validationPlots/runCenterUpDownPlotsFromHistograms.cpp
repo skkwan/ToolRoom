@@ -95,7 +95,7 @@ void runCenterUpDownPlotsFromHistograms()
     TString outputDirectory = "/eos/user/s/skkwan/www/sysPlots-combineChecks/" + channelToDo;
 
     // run mkdir and copy the index.php file needed to correctly display the folders and plots in website view
-    gSystem->Exec("mkdir -r " + outputDirectory);
+    gSystem->Exec("mkdir -p " + outputDirectory);
     gSystem->Exec("cp /eos/user/s/skkwan/www/index.php " + outputDirectory);
 
     std::vector<TString> categories = {"inclusive"}; // lowMassSR", "mediumMassSR", "highMassSR", "highMassCR"}; 
@@ -106,7 +106,7 @@ void runCenterUpDownPlotsFromHistograms()
 
       // run mkdir and copy the index.php file needed to correctly display the plots in website view
       TString outputDirectoryWithCategory = outputDirectory + "/" + category;
-      gSystem->Exec("mkdir -r " + outputDirectoryWithCategory);
+      gSystem->Exec("mkdir -p " + outputDirectoryWithCategory);
       gSystem->Exec("cp " + outputDirectory + "/index.php " + outputDirectoryWithCategory);
 
       // Common to embed and MC    
