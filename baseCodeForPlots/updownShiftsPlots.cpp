@@ -168,8 +168,8 @@ int updownShiftsPlots(TString process, TString baseVariable, TString channelFold
  
   Tcan->cd();
   //Tcan->SetLogy();
-  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+process+"_"+baseVariable+systematic+optional+".pdf");
-  Tcan->SaveAs(outputDirectory+"/"+channelFolder+"/"+process+"_"+baseVariable+systematic+optional+".png");
+  Tcan->SaveAs(outputDirectory+"/sys-"+process+"-"+baseVariable+systematic+optional+".pdf");
+  Tcan->SaveAs(outputDirectory+"/sys-"+process+"-"+baseVariable+systematic+optional+".png");
 
   delete Tcan;
 
