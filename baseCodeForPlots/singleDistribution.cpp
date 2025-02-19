@@ -53,7 +53,7 @@ void applyLegStyle(TLegend *leg){
    number of bins and ranges from integers low to high.
    "legend" is the legend label, "xLabel" is the x-axis label. */
 int singleDistributionPlots(TString variable, TString cut, TString title, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
-			    TString xLabel, int bins, int low, int high, TString plotname = ""){ 
+			    TString xLabel, int bins, double low, double high, TString plotname = ""){ 
  
   setTDRStyle();
  
@@ -99,8 +99,8 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
   hist->GetXaxis()->SetTitle(xLabel);
   hist->GetYaxis()->SetTitle("Count");
 
-  leg->AddEntry(hist, legend + ": " + yield + " events","l");
-  leg->Draw();
+  // leg->AddEntry(hist, legend + ": " + yield + " events","l");
+  // leg->Draw();
 
   latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + title + "}"); 
  
@@ -113,12 +113,6 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
     Tcan->SaveAs(outputDirectory+plotname+".pdf");
   }
 
-  leg->AddEntry(hist, legend + ": " + yield + " events","l");
-  leg->Draw();
-
-  latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + legend + "}"); 
- 
-  Tcan->cd();
 
   //TPad* pad2 = new TPad("pad2","The lower pad",0,0,0.98,0.25);
   //applyPadStyle(pad2);
@@ -130,8 +124,8 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
  
   Tcan->cd();
 
-  // Tcan->SaveAs(outputDirectory+variable+description+".png");
-  Tcan->SaveAs(outputDirectory+variable+description+".pdf");
+  Tcan->SaveAs(outputDirectory+variable+".png");
+  Tcan->SaveAs(outputDirectory+variable+".pdf");
  
   delete Tcan;
   return 1;

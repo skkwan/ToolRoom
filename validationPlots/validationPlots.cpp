@@ -11,29 +11,28 @@ void validationPlots(TString sampleName, TString legend, TString inputDirectory,
   // Load the macro
   gROOT->ProcessLine(".L ../baseCodeForPlots/singleDistribution.cpp");
  
-  TString treePath = "event_tree";
+  TString treePath = "gen_tree";
 
   gSystem->Exec("mkdir -p " + outputDirectory);
 
-  TString cut = "";
+  TString cut_hasEle = "p4_gen_ele1.Pt() > 0";
+  TString cut_hasMuon = "p4_gen_muon1.Pt() > 0";
 
-  singleDistributionPlots("deltaR_ak4_leadingPair", cut, sampleName, treePath, inputDirectory, outputDirectory, "#DeltaR(close-by gen b's, nearest AK4 jet)", 40, 0, 1);
-  singleDistributionPlots("pt_resolution_ak4_leadingPair", cut, sampleName, treePath, inputDirectory, outputDirectory, "pT resolution of close-by gen b's and nearest AK4 jet", 40, -2, 3);  
-  singleDistributionPlots("jet_btagDeepFlavB_ak4_matched_leadingPair", cut, sampleName, treePath, inputDirectory, outputDirectory, "DeepFlavB score of nearest AK4 jet", 40, 0, 1);  
-  singleDistributionPlots("jetPt_ak4_matched_leadingPair", cut, sampleName, treePath, inputDirectory, outputDirectory, "p_{T} of nearest AK4 jet", 50, 0, 200);  
-  singleDistributionPlots("genPt_leadingPair", cut, sampleName, treePath, inputDirectory, outputDirectory, "Gen p_{T} of close-by gen b's", 50, 0, 200);  
-
-
-  singleDistributionPlots("closest_idx2", cut, sampleName, treePath, inputDirectory, outputDirectory, "Index of third b, if within #DeltaR < 0.4", 5, -1, 3);
-  singleDistributionPlots("closest_idx3", cut, sampleName, treePath, inputDirectory, outputDirectory, "Index of fourth nearby b, if within #DeltaR < 0.4", 5, -1, 3);
+  singleDistributionPlots("p4_gen_ele1.Pt()", cut_hasEle, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen electron 1 p_{T} / GeV", 40, 0, 120, sampleName + "_gen_ele_1_pt");
+  singleDistributionPlots("p4_gen_ele2.Pt()", cut_hasEle, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen electron 2 p_{T} / GeV", 40, 0, 120, sampleName + "_gen_ele_2_pt");
+  singleDistributionPlots("p4_gen_ele1.Eta()", cut_hasEle, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen electron 1 #eta", 40, -3.4, 3.4, sampleName + "_gen_ele_1_eta");
+  singleDistributionPlots("p4_gen_ele2.Eta()", cut_hasEle, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen electron 2 #eta", 40, -3.4, 3.4, sampleName + "_gen_ele_2_eta");
 
 
-  // overlayDistributions("genPt_b0", "genPt_b1", "genPt_b2", "genPt_b3",
-  //                      "leading", "sub-leading", "sub-sub-leading", "sub-sub-sub-leading", 
-  //                      cut, treePath, inputDirectory, outputDirectory,
-  //                      "genPt of b jet [GeV]",
-  //                      60, 0, 150,
-  //                      sampleName,
-  //                      sampleName + "_overlay");
+  singleDistributionPlots("p4_gen_muon1.Pt()", cut_hasMuon, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen muon 1 p_{T} / GeV", 40, 0, 120, sampleName + "_gen_muon_1_pt");
+  singleDistributionPlots("p4_gen_muon2.Pt()", cut_hasMuon, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen muon 2 p_{T} / GeV", 40, 0, 120, sampleName + "_gen_muon_2_pt");
+  singleDistributionPlots("p4_gen_muon1.Eta()", cut_hasMuon, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen muon 1 #eta", 40, -3.4, 3.4, sampleName + "_gen_muon_1_eta");
+  singleDistributionPlots("p4_gen_muon2.Eta()", cut_hasMuon, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen muon 2 #eta", 40, -3.4, 3.4, sampleName + "_gen_muon_2_eta");
+
+
+  // singleDistributionPlots("jet_btagDeepFlavB_ak4_matched_leadingPair", cut, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "DeepFlavB score of nearest AK4 jet", 40, 0, 1);  
+  // singleDistributionPlots("jetPt_ak4_matched_leadingPair", cut, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "p_{T} of nearest AK4 jet", 50, 0, 200);  
+  // singleDistributionPlots("genPt_leadingPair", cut, sampleName, sampleName, treePath, inputDirectory, outputDirectory, "Gen p_{T} of close-by gen b's", 50, 0, 200);  
+
         
 }
