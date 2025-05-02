@@ -2,9 +2,9 @@ import os
 
 dict_wwwPlotDirs = {
     "2018": {
-        "mutau": "/eos/user/s/skkwan/www/dataMC/2024-10-12-16h58m-iteration18-mutau",
-        "etau": "/eos/user/s/skkwan/www/dataMC/2024-10-12-17h03m-iteration18-etau",
-        "emu": "/eos/user/s/skkwan/www/dataMC/2024-10-11-11h12m-iteration18-emu",
+        "mutau": "/eos/user/s/skkwan/www/dataMC/2024-11-20-23h57m-benchmark-2018-mutau-iteration1-m_vis",
+        "etau": "/eos/user/s/skkwan/www/dataMC/2024-12-04-11h55m-benchmark-2018-etau-iteration1p5-m_vis",
+        "emu": "/eos/user/s/skkwan/www/dataMC/2024-12-04-14h39m-benchmark-2018-emu-iteration1p5-m_vis",
     },
     "2017": {
         "mutau": "/eos/user/s/skkwan/www/dataMC/2024-10-16-11h36m-year_2017-iteration0-mutau/",
@@ -13,17 +13,16 @@ dict_wwwPlotDirs = {
     },
 }
 
-for year in ["2017"]:
+for year in ["2018"]:
     for channel in ["mutau", "etau", "emu"]:
         wwwPlotDir = dict_wwwPlotDirs[year][channel]
         plotnames = [
-            f"{wwwPlotDir}/{channel}_inclusive_bpt_deepflavour_1_signal_cascade_mass_100_15.pdf",
-            f"{wwwPlotDir}/{channel}_inclusive_bpt_deepflavour_2_signal_cascade_mass_100_15.pdf",
-            f"{wwwPlotDir}/{channel}_inclusive_pt_1_signal_cascade_mass_100_15.pdf",
-            f"{wwwPlotDir}/{channel}_inclusive_pt_2_signal_cascade_mass_100_15.pdf",
-            f"{wwwPlotDir}/{channel}_inclusive_m_vis_signal_cascade_mass_100_15.pdf",
+            f"{wwwPlotDir}/{channel}_highMassCR_m_vis_signal_4b2t_mass_100_15.pdf",
+            f"{wwwPlotDir}/{channel}_lowMassSR_m_vis_signal_4b2t_mass_100_15.pdf",
+            f"{wwwPlotDir}/{channel}_mediumMassSR_m_vis_signal_4b2t_mass_100_15.pdf",
+            f"{wwwPlotDir}/{channel}_highMassSR_m_vis_signal_4b2t_mass_100_15.pdf",
         ]
-        anPlotDir = f"/eos/user/s/skkwan/AnalysisNotes/AN-24-166/plots/{channel}_control/{year}/prefit"
+        anPlotDir = f"/eos/user/s/skkwan/AnalysisNotes/AN-24-166/plots/{channel}_cutbased/{year}/prefit"
 
         for plot in plotnames:
             os.system(f"mkdir -p {anPlotDir}")
