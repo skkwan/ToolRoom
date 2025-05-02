@@ -31,7 +31,7 @@
 /* Apply template style to a TPad* pad1. */
 void applyPadStyle(TPad* pad1){
   pad1->SetFillColor(0);
-  pad1->Draw();  pad1->cd();  pad1->SetLeftMargin(0.2);  pad1->SetBottomMargin(0.13); pad1->SetRightMargin(0.1);
+  pad1->Draw();  pad1->cd();  pad1->SetLeftMargin(0.2);  pad1->SetBottomMargin(0.2); pad1->SetRightMargin(0.3); pad1->SetTopMargin(0.2);
   //pad1->SetGrid(); 
   pad1->SetGrid(10,10); 
 }
@@ -60,6 +60,7 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
   Tcan->cd();     /* Set current canvas */
   Tcan->SetFillColor(0);
+  Tcan->SetRightMargin(0.07);
  
   TLegend *leg = new TLegend(0.20,0.85,0.9,0.95);
   applyLegStyle(leg);
@@ -82,7 +83,7 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
     return 0;
   }
  
-  TH1F *hist = new TH1F("hist","hist", bins,low,high);
+  TH1F *hist = new TH1F("hist","hist", bins, low, high);
   int yield = tree->Draw(variable+">>+hist", cut);
 
   hist->SetMarkerColor(0);
@@ -90,9 +91,6 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
   hist->SetFillColorAlpha(kBlue+2, 0.1);
   hist->SetLineWidth(1);
   hist->SetLineColor(kBlue+2);
-
-  // hist->Scale(1/hist->Integral());
-  // Tcan->SetLogy();
 
   hist->Draw("HIST"); 
   
@@ -108,9 +106,11 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
 
   if (plotname == "") {
     Tcan->SaveAs(outputDirectory+variable+".pdf");
+    Tcan->SaveAs(outputDirectory+variable+".png");
   }
   else {
     Tcan->SaveAs(outputDirectory+plotname+".pdf");
+    Tcan->SaveAs(outputDirectory+plotname+".png");
   }
 
 
@@ -121,12 +121,8 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
  
   //ratio->Draw("p");
 
- 
-  Tcan->cd();
 
-  Tcan->SaveAs(outputDirectory+variable+".png");
-  Tcan->SaveAs(outputDirectory+variable+".pdf");
- 
+
   delete Tcan;
   return 1;
 

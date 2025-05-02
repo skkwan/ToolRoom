@@ -111,20 +111,20 @@ int updownShiftsPlots(TString process, TString baseVariable, TString channelFold
   float yieldDown   = hDown->Integral();
 
   hCenter->SetMarkerColor(0);
-//  hCenter->SetFillStyle(1001);
-//  hCenter->SetFillColorAlpha(kBlack, 0.1);
+  hCenter->SetFillStyle(1001);
+  hCenter->SetFillColorAlpha(kBlack, 0.1);
   hCenter->SetLineWidth(1);
   hCenter->SetLineColor(kBlack);
 
   hDown->SetMarkerColor(0);
-//  hDown->SetFillStyle(1001);
-//  hDown->SetFillColorAlpha(kBlue+2, 0.1);
+  hDown->SetFillStyle(3353);
+  hDown->SetFillColorAlpha(kGreen+2, 0.1);
   hDown->SetLineWidth(2);
   hDown->SetLineColor(kGreen+1);
 
   hUp->SetMarkerColor(0);
-//  hUp->SetFillStyle(1001);
-//  hUp->SetFillColorAlpha(kRed+2, 0.1);
+  hUp->SetFillStyle(3335);
+  hUp->SetFillColorAlpha(kRed+2, 0.1);
   hUp->SetLineWidth(2);
   hUp->SetLineColor(kRed+2);
 
