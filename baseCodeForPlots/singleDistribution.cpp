@@ -31,7 +31,7 @@
 /* Apply template style to a TPad* pad1. */
 void applyPadStyle(TPad* pad1){
   pad1->SetFillColor(0);
-  pad1->Draw();  pad1->cd();  pad1->SetLeftMargin(0.2);  pad1->SetBottomMargin(0.13); pad1->SetRightMargin(0.1);
+  pad1->Draw();  pad1->cd();  pad1->SetLeftMargin(0.2);  pad1->SetBottomMargin(0.2); pad1->SetRightMargin(0.3); pad1->SetTopMargin(0.2);
   //pad1->SetGrid(); 
   pad1->SetGrid(10,10); 
 }
@@ -53,13 +53,14 @@ void applyLegStyle(TLegend *leg){
    number of bins and ranges from integers low to high.
    "legend" is the legend label, "xLabel" is the x-axis label. */
 int singleDistributionPlots(TString variable, TString cut, TString title, TString legend, TString treePath, TString inputDirectory, TString outputDirectory,
-			    TString xLabel, int bins, int low, int high, TString plotname = ""){ 
+			    TString xLabel, int bins, double low, double high, TString plotname = ""){ 
  
   setTDRStyle();
  
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
   Tcan->cd();     /* Set current canvas */
   Tcan->SetFillColor(0);
+  Tcan->SetRightMargin(0.07);
  
   TLegend *leg = new TLegend(0.20,0.85,0.9,0.95);
   applyLegStyle(leg);
@@ -82,7 +83,7 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
     return 0;
   }
  
-  TH1F *hist = new TH1F("hist","hist", bins,low,high);
+  TH1F *hist = new TH1F("hist","hist", bins, low, high);
   int yield = tree->Draw(variable+">>+hist", cut);
 
   hist->SetMarkerColor(0);
@@ -91,16 +92,13 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
   hist->SetLineWidth(1);
   hist->SetLineColor(kBlue+2);
 
-  // hist->Scale(1/hist->Integral());
-  // Tcan->SetLogy();
-
   hist->Draw("HIST"); 
   
   hist->GetXaxis()->SetTitle(xLabel);
   hist->GetYaxis()->SetTitle("Count");
 
-  leg->AddEntry(hist, legend + ": " + yield + " events","l");
-  leg->Draw();
+  // leg->AddEntry(hist, legend + ": " + yield + " events","l");
+  // leg->Draw();
 
   latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + title + "}"); 
  
@@ -108,17 +106,13 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
 
   if (plotname == "") {
     Tcan->SaveAs(outputDirectory+variable+".pdf");
+    Tcan->SaveAs(outputDirectory+variable+".png");
   }
   else {
     Tcan->SaveAs(outputDirectory+plotname+".pdf");
+    Tcan->SaveAs(outputDirectory+plotname+".png");
   }
 
-  leg->AddEntry(hist, legend + ": " + yield + " events","l");
-  leg->Draw();
-
-  latex->DrawLatex(0.16, 0.960, "#scale[0.7]{" + legend + "}"); 
- 
-  Tcan->cd();
 
   //TPad* pad2 = new TPad("pad2","The lower pad",0,0,0.98,0.25);
   //applyPadStyle(pad2);
@@ -127,12 +121,8 @@ int singleDistributionPlots(TString variable, TString cut, TString title, TStrin
  
   //ratio->Draw("p");
 
- 
-  Tcan->cd();
 
-  // Tcan->SaveAs(outputDirectory+variable+description+".png");
-  Tcan->SaveAs(outputDirectory+variable+description+".pdf");
- 
+
   delete Tcan;
   return 1;
 
