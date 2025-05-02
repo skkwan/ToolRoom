@@ -13,83 +13,11 @@ import sys
 import ROOT
 import re
 
-datasets = [
-
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-100_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-100_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-110_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-110_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-30_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-30_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-40_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-40_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-50_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-50_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-60_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-60_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-70_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-70_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-80_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-80_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-90_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-90_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-100_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-100_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-40_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-40_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-50_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-50_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-60_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-60_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-70_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-70_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-80_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-80_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-90_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-90_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-60_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-60_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-70_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-70_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-90_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_GluGluH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-90_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-100_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-100_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-110_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-110_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-30_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-30_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-40_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-40_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-50_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-50_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-60_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-60_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-70_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-70_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-80_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-80_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-90_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-15_MA2-90_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-100_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-100_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-40_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-40_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-50_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-50_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-60_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-60_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-70_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-70_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-80_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-80_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-90_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-20_MA2-90_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-60_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-60_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-70_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-70_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-"/Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-90_TauFilter_TuneCP5_13TeV-madgraph-pythia8/skkwan-NanoPost_Cascade_VBFH125toA1A2to3A1_A1to2Bor2Tau_MA1-30_MA2-90_RunIISummer20UL17NanoAODv9-443bb40de6ac466e0eb3687ceac57faa/USER",
-# "/DY1JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DY1JetsToLL_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/DY2JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DY2JetsToLL_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/DY3JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DY3JetsToLL_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/DY4JetsToLL_M-50_MatchEWPDG20_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DY4JetsToLL_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DYJetsToLL_M-10to50_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DYJetsToLL_M-50-ext1_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_DYJetsToLL_M-50_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/GluGluHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_GluGluHToTauTau_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/GluGluHToWWTo2L2Nu_M125_TuneCP5_PSw_13TeV-powheg2-pythia8/skkwan-NanoPost_GluGluHToWWTo2L2Nu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/GluGluZH_HToWW_ZTo2L_M-125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_GluGluZH_HToWW_ZTo2L_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/HWminusJ_HToWW_M-125_TuneCP5_13TeV-powheg-jhugen727-pythia8/skkwan-NanoPost_HWminusJ_HToWW_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/HWplusJ_HToWW_M-125_TuneCP5_13TeV-powheg-jhugen727-pythia8/skkwan-NanoPost_HWplusJ_HToWW_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/HZJ_HToWW_M-125_TuneCP5_13TeV-powheg-jhugen727-pythia8/skkwan-NanoPost_HZJ_HToWW_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/skkwan-NanoPost_ST_t-channel_antitop_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8/skkwan-NanoPost_ST_t-channel_top_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_ST_tW_antitop_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_ST_tW_top_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_TTTo2L2Nu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_TTToHadronic_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_TTToSemiLeptonic_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-#"/VBFHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_VBFHToTauTau_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/VBFHToWWTo2L2Nu_M-125_TuneCP5_13TeV-powheg-jhugen727-pythia8/skkwan-NanoPost_VBFHToWWTo2L2Nu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/VVTo2L2Nu_MLL-1toInf_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-NanoPost_VVTo2L2Nu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_W1JetsToLNu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_W2JetsToLNu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_W3JetsToLNu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_W4JetsToLNu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-NanoPost_WJetsToLNu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-NanoPost_WZTo2Q2L_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-NanoPost_WZTo3LNu_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/WminusHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_WminusHToTauTau_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/WplusHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_WplusHToTauTau_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ZHToTauTau_M125_CP5_13TeV-powheg-pythia8/skkwan-NanoPost_ZHToTauTau_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ZZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-NanoPost_ZZTo2Q2L_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/skkwan-NanoPost_ZZTo4L_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ttHToNonbb_M125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_ttHToNonbb_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
-# "/ttHTobb_M125_TuneCP5_13TeV-powheg-pythia8/skkwan-NanoPost_ttHTobb_RunIISummer20UL17NanoAODv9-76de701442013e6ff941c86cd482e64d/USER",
+datasets = [    
+    "2018,WWTo2L2Nu,/WWTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/skkwan-skimTest_WWTo2L2Nu_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
+    "2018,WZTo2Q2L,/WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-skimTest_WZTo2Q2L_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
+    "2018,WZTo3LNu,/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-skimTest_WZTo3LNu_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
+    "2018,ZH_HToBB_ZToLL_M-125,/ZH_HToBB_ZToLL_M-125_TuneCP5_13TeV-powheg-pythia8/skkwan-skimTest_ZH_HToBB_ZToLL_M-125_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
 ]
 
 def getNumberOfEvents(dataset_name):
@@ -103,9 +31,8 @@ def getNumberOfEvents(dataset_name):
 
     with open("allfiles.csv", "r") as allfiles:
         for line in allfiles:
-            df = ROOT.RDataFrame("Runs", f"root://cms-xrd-global.cern.ch//{line}")
-            np = df.AsNumpy(["genEventCount"])
-            nEntries = np["genEventCount"][0]
+            df = ROOT.RDataFrame("Events", f"root://cms-xrd-global.cern.ch//{line}")
+            nEntries = df.Count().GetValue()
             nEntriesTotal += nEntries
             print(f"Found {nEntries} events, so far I have {nEntriesTotal} events")
     print(nEntriesTotal)
@@ -116,9 +43,12 @@ def getNumberOfEvents(dataset_name):
 if __name__ == '__main__':
     os.system("rm out.csv")
     os.system("touch out.csv")
-    for dataset_name in datasets:
-        eventCount = getNumberOfEvents(dataset_name)
+    for line in datasets:
+        x = line.split(",")
+        dataset_name = x[1]
+        dataset_path = x[2]
+        eventCount = getNumberOfEvents(dataset_path)
+        eventCountAsString = str(eventCount)
         # Use regex to get the simple name
-        shortname = re.findall('.*NanoPost_(.*)_RunII.*', dataset_name)[0]
         with open("out.csv", "a") as out:
-            out.write(f"/eos/user/s/skkwan/hToAA/condorSkim/2024-10-10-11h33m-benchmark-2017-iteration0,{shortname},config/2017/,{eventCount}.0,split\n")
+            out.write("    {" + dataset_name + ", " + eventCountAsString + ".0},")
