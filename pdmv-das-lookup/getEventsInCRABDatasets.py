@@ -14,10 +14,7 @@ import ROOT
 import re
 
 datasets = [    
-    "2018,WWTo2L2Nu,/WWTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/skkwan-skimTest_WWTo2L2Nu_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
-    "2018,WZTo2Q2L,/WZTo2Q2L_mllmin4p0_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-skimTest_WZTo2Q2L_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
-    "2018,WZTo3LNu,/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/skkwan-skimTest_WZTo3LNu_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
-    "2018,ZH_HToBB_ZToLL_M-125,/ZH_HToBB_ZToLL_M-125_TuneCP5_13TeV-powheg-pythia8/skkwan-skimTest_ZH_HToBB_ZToLL_M-125_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
+    "2018,DYJetsToLL_M-50,/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/skkwan-skimTest_DYJetsToLL_M-50_RunIISummer20UL18NanoAODv9-1ea93bf7cfbb24e247bd0f4bd1955225/USER,1",
 ]
 
 def getNumberOfEvents(dataset_name):
