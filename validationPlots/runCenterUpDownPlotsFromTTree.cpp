@@ -74,7 +74,7 @@ void runCenterUpDownPlotsFromTTree()
 
     // JER and JES
     std::vector<std::string> vSystematicsJER_ = {"CMS_scale_j", "CMS_res_j"};
-    std::vector<std::string> vVariablesJER_   = {"bpt_ak4_1", "bpt_ak4_2"};
+    std::vector<std::string> vVariablesJER_   = {"bpt_ak4_1", "bpt_ak4_2", "met", "metphi"};
     makeShiftedPlotsFromBranches(process, vSystematicsJER_, vVariablesJER_, year, treePath, inputDirectory, outputDirectory);
   }
 

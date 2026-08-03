@@ -112,7 +112,7 @@ ranges_t ranges {
     // {"bmass_ak8_3", {default_nbins, 0, 500}},
     // {"btagScore_ak8_3", {default_nbins, 0, 1.5}},
 
-    {"met",    {60, 50, 650}}, // bins of 10 GeV each
+    {"met",    {15, 50, 200}}, // bins of 10 GeV each
     {"metphi", {default_nbins, -3.14, 3.14}},
     {"recoHT", {default_nbins, 0, 800}},
 
