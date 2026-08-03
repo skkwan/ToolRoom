@@ -17,7 +17,7 @@ void makeShiftedPlotsFromBranches(TString process, std::vector<std::string> vSys
 
   for (unsigned int i = 0; i < vSystematics.size(); i++) {
     for (unsigned int j = 0; j < vVariables.size(); j++ ) {
-      updownShiftsPlotsFromBranches(process, vVariables[j], + "_" + vSystematics[i], treename, inputDirectory, outputDirectory);
+      updownShiftsPlotsFromBranches(process, vVariables[j], + "_" + vSystematics[i], treename, inputDirectory, outputDirectory, year);
     }   
   }
 
@@ -51,50 +51,31 @@ void runCenterUpDownPlotsFromTTree()
   //                                        "ttHToNonbb", "ttHTobb", 
   //                                        "SUSYVBFToHToAA_AToBB_AToTauTau_M-45", "SUSYGluGluToHToAA_AToBB_AToTauTau_M-45"};
 
+  std::vector<std::string> vProcesses = {"DYJetsToLL_MLL-50-mini"};
 
-  //   std::vector<std::string> vProcesses = {"VBFHToTauTau"}; // , "GluGluHToTauTau"};
-  std::vector<std::string> vProcesses = {"TTTo2L2Nu"};
+  std::string year = "2022";
 
   for (unsigned int i = 0; i < vProcesses.size(); i++) {
   
     std::string process = vProcesses[i];
 
-    TString treePath = "mutau_tree";
-    // TString inputDirectory  = "/Users/stephaniekwan/Dropbox/Princeton_G4/hToAA/Systematics/04_25_22_test_mvis_with_current_sys/histograms_" + process + ".root";
-    // TString outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G4/hToAA/Systematics/plots/04_25_22_test_mvis_with_current_sys/" + process + "/";
+    TString treePath = "event_tree";
 
-    TString inputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G4/hToAA/SVFit/mt_2018_TTTo2L2Nu-TTTo2L2Nu_0.root";
-    TString outputDirectory = "/Users/stephaniekwan/Dropbox/Princeton_G4/hToAA/Systematics/plots/05_10_22_svfit_test/" + process + "/";
+    TString inputDirectory = "/afs/cern.ch/work/s/skkwan/public/zhmet/CMSSW_14_0_21/src/luna-zhmet/skim/DYJetsToLL_MLL-50-mini.root";
+    TString outputDirectory = "/eos/user/s/skkwan/www/higgsino/sys-Checks/" + year + "/";
 
     gSystem->Exec("mkdir -p " + outputDirectory);
 
-    // Muon Energy Scale
-    std::vector<std::string> vSystematicsMES_ = {"CMS_muES_eta0to1p2", "CMS_muES_eta1p2to2p1", "CMS_muES_eta2p1to2p4"};
+    // Muon energy scale
+    std::vector<std::string> vSystematicsMES_ = {"CMS_scale_m", "CMS_res_m"};
     
-    std::vector<std::string> vVariablesMES_   = {"m_vis", "met"};
-      // {"pt_1", "mtMET_1", "m_vis"};
-    makeShiftedPlotsFromBranches(process, vSystematicsMES_, vVariablesMES_, "2018", treePath, inputDirectory, outputDirectory);
+    std::vector<std::string> vVariablesMES_   = {"pt_1", "pt_2"};
+    makeShiftedPlotsFromBranches(process, vSystematicsMES_, vVariablesMES_, year, treePath, inputDirectory, outputDirectory);
 
-
-    // Tau Energy Scale
-    // std::vector<std::string> vSystematicsTauES_ = {"CMS_TES_dm0", "CMS_TES_dm1", "CMS_TES_dm10", "CMS_TES_dm11",
-    //                                               "CMS_eleTES_dm0", "CMS_eleTES_dm1",
-    //                                               "CMS_muTES_dm0",  "CMS_muTES_dm1"};
-    // std::vector<std::string> vVariablesTauES_   = {"pt_2", "eta_2", "met", "metphi", "mtMET_2", "m_vis"};
-    // makeShiftedPlotsFromBranches(process, vSystematicsTauES_, vVariablesTauES_, "2018", treePath inputDirectory, outputDirectory);
-
-    // JER
-    // std::vector<std::string> vSystematicsJER_ = {"CMS_JER", "CMS_JetAbsolute", "CMS_JetBBEC1", "CMS_JetEC2", "CMS_JetFlavorQCD", "CMS_JetHF", 
-    //     "CMS_JetRelativeBal",
-    //     "CMS_JetAbsoluteyear", "CMS_JetBBEC1year", "CMS_JetEC2year", "CMS_JetHFyear", "CMS_JetRelativeSample"};
-
-    std::vector<std::string> vSystematicsJER_ = {"JER", "JetAbsolute", "JetBBEC1", "JetEC2", "JetFlavorQCD", "JetHF", 
-        "JetRelativeBal",
-        "JetAbsoluteyear", "JetBBEC1year", "JetEC2year", "JetHFyear", "JetRelativeSample"};
-    // std::vector<std::string> vVariablesJER_   = {"bpt_deepflavour_1", "beta_deepflavour_1", "met", "metphi",
-    //                                            "bpt_deepflavour_2", "beta_deepflavour_2"};
-    std::vector<std::string> vVariablesJER_   = {"m_sv"};
-    makeShiftedPlotsFromBranches(process, vSystematicsJER_, vVariablesJER_, "2018", treePath, inputDirectory, outputDirectory);
+    // JER and JES
+    std::vector<std::string> vSystematicsJER_ = {"CMS_scale_j", "CMS_res_j"};
+    std::vector<std::string> vVariablesJER_   = {"bpt_ak4_1", "bpt_ak4_2"};
+    makeShiftedPlotsFromBranches(process, vSystematicsJER_, vVariablesJER_, year, treePath, inputDirectory, outputDirectory);
   }
 
 }

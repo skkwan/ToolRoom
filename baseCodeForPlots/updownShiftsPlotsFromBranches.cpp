@@ -1,5 +1,6 @@
 #include "TAxis.h"
 #include "TCanvas.h"
+#include "TColor.h"
 #include "TChain.h"
 #include "TEfficiency.h"
 #include "TFile.h"
@@ -24,6 +25,7 @@
 
 #include "tdrstyle.C"
 #include "CMS_lumi.h"
+#include "../validationPlots/ranges.h"
 
 #ifndef UP_DOWN_SHIFTS_PLOTS_FROM_BRANCHES_INCL
 #define UP_DOWN_SHIFTS_PLOTS_FROM_BRANCHES_INCL
@@ -34,6 +36,13 @@ void applyPadStyle(TPad* pad1){
   pad1->Draw();  pad1->cd();  pad1->SetLeftMargin(0.2);  pad1->SetBottomMargin(0.13); pad1->SetRightMargin(0.1);
   //pad1->SetGrid(); 
   pad1->SetGrid(10,10); 
+}
+
+/* Add overflow to a histogram. */
+TH1D* addOverflow(TH1D* h){
+  int nbins = h->GetNbinsX();
+  h->SetBinContent(nbins, h->GetBinContent(nbins) + h->GetBinContent(nbins + 1));
+  return h;
 }
 
 /* Apply legend style to a TLegend *leg. */
@@ -51,7 +60,7 @@ void applyLegStyle(TLegend *leg){
    input file. 
    The ROOT file is located at inputDirectory. The resulting plots are written to outputDirectory, with filename including "name". The histogram has (bins)
    number of bins and ranges from integers low to high. */
-int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString systematic, TString treename, TString inputDirectory, TString outputDirectory){ 
+int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString systematic, TString treename, TString inputDirectory, TString outputDirectory, TString year = "2024"){ 
  
   //gROOT->LoadMacro("CMS_lumi.C");
   //gROOT->ProcessLine(".L ~/Documents/work/Analysis/PhaseIIStudies/2018/tdrstyle.C");
@@ -63,8 +72,8 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
   // TString varDown  = process + "_" + baseVariable + systematic + "Down";
 
   TString variable = baseVariable;
-  TString varUp    = baseVariable + systematic + "Up";
-  TString varDown  = baseVariable + systematic + "Down";
+  TString varUp    = baseVariable + systematic + "_Up";
+  TString varDown  = baseVariable + systematic + "_Down";
  
   //  TFile* tauFile = new TFile("dummy");
   TCanvas* Tcan = new TCanvas("Tcan","", 100, 20, 800, 600);
@@ -73,7 +82,7 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
   //TPad* pad1 = new TPad("pad1","The pad",0,0.0,0.98,1);
   //applyPadStyle(pad1);
  
-  TLegend *leg = new TLegend(0.50,0.62,0.9,0.92);
+  TLegend *leg = new TLegend(0.45,0.62,0.9,0.92);
   applyLegStyle(leg);
  
   TFile *file = new TFile(inputDirectory);
@@ -91,14 +100,23 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
   }
 
 
-  TH1D *hCenter = new TH1D("hCenter", "hCenter", 60, 0, 600);
+  int nBins = 60;
+  float xmin = 0, xmax = 600;
+  auto rangeIt = ranges.find(baseVariable.Data());
+  if (rangeIt != ranges.end()) {
+    nBins = static_cast<int>(rangeIt->second[0]);
+    xmin  = rangeIt->second[1];
+    xmax  = rangeIt->second[2];
+  }
+
+  TH1D *hCenter = new TH1D("hCenter", "hCenter", nBins, xmin, xmax);
   tree->Draw(variable + " >> hCenter");
 
 
-  TH1D *hUp = new TH1D("hUp", "hUp", 60, 0, 600);
+  TH1D *hUp = new TH1D("hUp", "hUp", nBins, xmin, xmax);
   tree->Draw(varUp + " >> hUp");
 
-  TH1D *hDown = new TH1D("hDown", "hDown", 60, 0, 600);
+  TH1D *hDown = new TH1D("hDown", "hDown", nBins, xmin, xmax);
   tree->Draw(varDown + " >> hDown");
 
   if (hCenter == 0) {
@@ -113,11 +131,16 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
 
   }
   if (hDown == 0) {
-    std::cout << "[ERROR:] Failed to extract histogram called " 
+    std::cout << "[ERROR:] Failed to extract histogram called "
               << varDown << " in the input file, exiting" << std::endl;
     return 0;
 
   }
+
+  addOverflow(hCenter);
+  addOverflow(hUp);
+  addOverflow(hDown);
+
   float yieldCenter = hCenter->Integral();
   float yieldUp     = hUp->Integral();
   float yieldDown   = hDown->Integral();
@@ -132,13 +155,13 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
 //  hDown->SetFillStyle(1001);
 //  hDown->SetFillColorAlpha(kBlue+2, 0.1);
   hDown->SetLineWidth(2);
-  hDown->SetLineColor(kGreen+1);
+  hDown->SetLineColor(TColor::GetColor("#7a21dd"));
 
   hUp->SetMarkerColor(0);
 //  hUp->SetFillStyle(1001);
 //  hUp->SetFillColorAlpha(kRed+2, 0.1);
   hUp->SetLineWidth(2);
-  hUp->SetLineColor(kRed+2);
+  hUp->SetLineColor(TColor::GetColor("#f89c20"));
 
   //   hUp->Scale(1/hUp->Integral());
   //   hCenter->Scale(1/hCenter->Integral());
@@ -149,10 +172,10 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
   hDown->Draw("HIST same");
   hCenter->Draw("HIST same");  
 
-  
   // This has to be the first histogram we declare above or the x- and y-axes labels will not show up
-  hUp->GetXaxis()->SetTitle(baseVariable+systematic+": no signal region cuts");
-  hUp->GetYaxis()->SetTitle("Yield (not normalized)");
+  std::cout << "systematic: " << systematic << std::endl;
+  hUp->GetXaxis()->SetTitle(baseVariable+systematic + " [GeV]");
+  hUp->GetYaxis()->SetTitle("nEntries");
   hUp->GetXaxis()->SetTitleSize(0.06); // default is 0.03     
   hUp->GetYaxis()->SetTitleSize(0.06); // default is 0.03     
 
@@ -174,11 +197,11 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
   //  leg->AddEntry(hCenter,"#tau_{h} Gen-Vis p_{T}>20 GeV","l");
   //  leg->AddEntry(Fake,"Fake Background","l");
   leg->SetTextFont(42);
-  leg->SetHeader(process + ": one file only");
+  leg->SetHeader(year + ": " + process);
 
-  leg->AddEntry(hDown,   TString::Format("Down:   yield: %0.2f", yieldDown),   "l");
-  leg->AddEntry(hCenter, TString::Format("Central: yield: %0.2f", yieldCenter), "l");
-  leg->AddEntry(hUp,     TString::Format("Up:        yield: %0.2f", yieldUp),     "l");
+  leg->AddEntry(hDown,   TString::Format("Down:   nEntries: %0.2f", yieldDown),   "l");
+  leg->AddEntry(hCenter, TString::Format("Central: nEntries: %0.2f", yieldCenter), "l");
+  leg->AddEntry(hUp,     TString::Format("Up:      nEntries: %0.2f", yieldUp),     "l");
 
   leg->Draw();
 
@@ -206,7 +229,7 @@ int updownShiftsPlotsFromBranches(TString process, TString baseVariable, TString
   Tcan->cd();
   //Tcan->SetLogy();
   Tcan->SaveAs(outputDirectory+baseVariable+systematic+".pdf");
-  // Tcan->SaveAs(outputDirectory+baseVariable+systematic+".png");
+  Tcan->SaveAs(outputDirectory+baseVariable+systematic+".png");
  
   delete Tcan;
 
